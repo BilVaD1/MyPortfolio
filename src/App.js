@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from 'react'
-import { CSSTransition } from 'react-transition-group';
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import  { RxHamburgerMenu } from 'react-icons/rx'
 
@@ -11,7 +10,7 @@ import './App.css'
 import { useStateContext } from './contexts/ContextProvider'
 
 const App = () => {
-  const { activeMenu, setMouseWidth, setMouseHeight, currentMode, setActiveMenu, setMouseTop, setMouseLeft, setMouseColor, setScreenSize } = useStateContext();
+  const { activeMenu, setMouseWidth, setMouseHeight, currentMode, setActiveMenu, setMouseTop, setMouseLeft, setMouseColor, setScreenSize, screenSize } = useStateContext();
   // const activeMenu = true
 
   useEffect(() => {
@@ -25,7 +24,7 @@ const App = () => {
   return (
     <div className={currentMode === 'Dark' ? 'dark' : 'light'}>
       <BrowserRouter>
-        <FollowMouse />
+        {screenSize >= 900 && <FollowMouse />}
         <div className='flex relative dark:bg-main-dark-bg'>
 
           {activeMenu ? (

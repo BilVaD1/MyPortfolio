@@ -19,7 +19,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div>
+    <div className='md:w-72 w-full'>
       <div className='flex flex-col mt-[100px] md:mt-[200px] md:ml-8 text-center md:text-start'>
 
         <div>

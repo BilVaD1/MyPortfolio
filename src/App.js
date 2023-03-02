@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import  { RxHamburgerMenu } from 'react-icons/rx'
+import { CSSTransition } from 'react-transition-group'
 
 import { Sidebar, FollowMouse } from './components'
 import { Home, Portfolio, Contact, Experience } from './pages'
@@ -11,7 +12,6 @@ import { useStateContext } from './contexts/ContextProvider'
 
 const App = () => {
   const { activeMenu, setMouseWidth, setMouseHeight, currentMode, setActiveMenu, setMouseTop, setMouseLeft, setMouseColor, setScreenSize, screenSize } = useStateContext();
-  // const activeMenu = true
 
   useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
@@ -26,14 +26,9 @@ const App = () => {
       <BrowserRouter>
         {screenSize >= 900 && <FollowMouse />}
         <div className='flex relative dark:bg-main-dark-bg'>
+        
+          {screenSize >= 900 ? <SideTransition /> : <NoTransition />}
 
-          {activeMenu ? (
-              <div className='md:w-72 h-screen fixed overflow-auto sidebar w-full dark:bg-secondary-dark-bg bg-white duration-700'
-                style={{ zIndex: '2000'}}
-              >
-                <Sidebar/>
-              </div>
-          ) : ''}
           <div className={`dark:bg-main-dark-bg duration-700 bg-main-bg min-h-screen w-full ${activeMenu 
             ? 'md:ml-72' 
             : 'flex-2'}`}>
@@ -73,3 +68,45 @@ const App = () => {
 }
 
 export default App
+
+
+
+const SideTransition = () => {
+  const { activeMenu } = useStateContext();
+  const nodeRef = useRef(null);
+
+  return (
+    <CSSTransition nodeRef={nodeRef} 
+      in={activeMenu} 
+      timeout={1000} 
+      classNames={{
+        enter: 'w-0',
+        enterActive: 'md:w-72 w-full transition-all ease-out duration-700',
+        exit: 'w-72',
+        exitActive: 'md:w-0 w-0 transition-all ease-in duration-200',
+      }}
+      unmountOnExit
+    >
+        <div ref={nodeRef} className='h-screen fixed overflow-auto sidebar dark:bg-secondary-dark-bg bg-white duration-700'
+          style={{ zIndex: '2000'}}
+        >
+          <Sidebar/>
+        </div>
+    </CSSTransition>
+)
+}
+
+const NoTransition = () => {
+  const { activeMenu } = useStateContext();
+
+  return (
+    <div>
+      {activeMenu && 
+        <div className='md:w-72 w-full h-screen fixed overflow-auto sidebar dark:bg-secondary-dark-bg bg-white duration-700'
+          style={{ zIndex: '2000'}}
+        >
+          <Sidebar/>
+        </div>}
+    </div>
+  )
+}

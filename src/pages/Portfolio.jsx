@@ -8,6 +8,7 @@ import employees from '../data/Employees.png'
 import fuel from '../data/Fuel2.png'
 import dashboard from '../data/Dashboard.png'
 import magento from '../data/Magento2.png'
+import musicRoom from '../data/MusicRoom.png'
 
 const cards = [
   {
@@ -33,7 +34,7 @@ const cards = [
   {
     id: 3,
     link: 'Project3',
-    href: 'https://github.com/BilVaD1/Dashboard',
+    href: 'https://dashboardsync-by-vadym.netlify.app',
     linkOnGit: 'https://github.com/BilVaD1/Dashboard',
     title: 'Dashboard',
     description: 'This is a dashboard created with Syncfusion. This dashboard has different apps: Calendar, Kanban, Editor, Color-Picker; Chart: Line, Area;',
@@ -49,6 +50,16 @@ const cards = [
     description: 'This is project with automation tests based on the webdriverIO for the Magento 2 site and project works with the Allure reporter;',
     additionalDescription: 'You can specify the Product Listing page from the CL. For that enter a value into the ListingPage variable(package.json > scripts > wdio > ListingPage). For example: ListingPage=women_Jackets then the page: https://magento.softwaretestingboard.com/women/tops-women/jackets-women.html will be opened. By default is the "women_HoodiesAndSweatshirts"(if you left the ListingPage empty). For specifing Hoodies & Sweatshirts use "HoodiesAndSweatshirts"; For Fitness Equipment: "gear_FitnessEquipment"',
     image: magento,
+  },
+  {
+    id: 5,
+    link: 'Project5',
+    href: 'https://github.com/BilVaD1/Music-Room',
+    linkOnGit: 'https://github.com/BilVaD1/Music-Room',
+    title: 'Music Room',
+    description: 'This app uses Dockerizing a Python Django app with React, serving from the same host;',
+    additionalDescription: 'Music Room is a web application that allows users to create a room and play music from Spotify. Other users who have access to the room can vote to skip songs, pause or start the music, and view the song queue.',
+    image: musicRoom,
   }
 ]
 
@@ -141,7 +152,7 @@ const Portfolio = () => {
                   mb-2`}
                 >
                     {card.title}
-                    <External link={"https://bilvad1.github.io/React_employees_app/"}/>
+                    <External link={card.href}/>
                 </div> : ''}
               <p className="text-base"
                 onMouseOver={() => { setMouseColor('rgba(0, 0, 0, 0.125)') }}

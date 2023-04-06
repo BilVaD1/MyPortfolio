@@ -71,8 +71,10 @@ const Portfolio = () => {
   const ref = useRef();
 
   const handleClose = (e) => {
-    e.stopPropagation(); // It's using to prevent onClick on the parent element
-    // setTimeout(() => setActiveCard(0), 100)
+    // if statement to handle the e.stopPropagation(); only when I click on the close, instead of when I click outside the project cart
+    if (e !== undefined) {
+      e.stopPropagation(); // It's using to prevent onClick on the parent element
+    }
     setActiveCard(0)
   }
 

@@ -58,6 +58,7 @@ function Contact() {
             Name
           </label>
           <input
+            test-id='name-input'
             type="text"
             id="name"
             name='user_name'
@@ -74,6 +75,7 @@ function Contact() {
             Email
           </label>
           <input
+            test-id='email-input'
             type="email"
             id="email"
             name='user_email'
@@ -90,6 +92,7 @@ function Contact() {
             Message
           </label>
           <textarea
+            test-id='message-input'
             id="message"
             value={message}
             onChange={(event) => setMessage(event.target.value)}
@@ -103,6 +106,7 @@ function Contact() {
         </div>
         <div className="text-center mt-[40px]">
           <button
+            test-id='submits-btn'
             type="submit"
             className="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-indigo-500 hover:bg-indigo-700 border-2 border-indigo-500 
             hover:border-indigo-700 duration-500 cursor-none"
@@ -128,7 +132,7 @@ export default Contact;
 
 const MyAlert = ({Name}) => {
   return (
-    <div className='relative mt-[50px] w-[500px] ml-auto mr-auto'>
+    <div className='relative mt-[50px] w-[500px] ml-auto mr-auto' test-id='alert'>
       <Alert severity="success">Thank you, {Name} Your message has been sent.</Alert>
     </div>
   )

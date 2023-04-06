@@ -9,6 +9,7 @@ const LinkedinIcon = () => {
 
     return (
         <a href="https://www.linkedin.com/in/vadym-bilan-a5144b1a8" 
+            test-id='linkedin-btn'
             target="_blank"
             rel="noreferrer"
             className='cursor-none'

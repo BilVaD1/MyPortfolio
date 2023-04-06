@@ -26,7 +26,7 @@ function FollowMouse() {
   }, []);
 
   return (
-    <div style={{ zIndex: '3000', position: 'fixed', top: mouseTop, left: mouseLeft, pointerEvents: 'none' }}>
+    <div style={{ zIndex: '3000', position: 'fixed', top: mouseTop, left: mouseLeft, pointerEvents: 'none' }} test-id='mouse'>
       <div style={{ position: 'absolute', 
         top: 0, 
         left: 0, 

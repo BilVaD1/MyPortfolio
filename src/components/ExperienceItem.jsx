@@ -8,6 +8,7 @@ const ExperienceItem = forwardRef(({ item, index, selected, onClick }, ref) => {
   
     return (
       <div
+        test-id='exp-item'
         className={`item snap-start rounded-lg p-[24px]`}
         style={{ flex: '0 0 100%', scrollSnapAlign: 'start' }} // add scrollSnapAlign to ensure snapping works correctly
         onMouseMove={onClick}

@@ -12,6 +12,7 @@ function Home() {
     <div className="dark:text-white mt-[100px] pb-[50px]">
 
       <div className='absolute md:right-16 md:top-20 top-10 right-5'
+        test-id='DownloadButton'
         onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px'); setMouseColor('rgba(191, 75, 30, 1)')}}
         onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseTop(-5); setMouseLeft(-10); setMouseColor('rgba(0, 0, 0, 0.5)')}}
       >
@@ -25,6 +26,7 @@ function Home() {
             <img className="md:relative m-auto h-auto w-4/6 mb-[15px] my_avatar md:w-4/5 md:h-[500px] object-cover" src={myPhoto} alt="Me" />
           </div>
           <div className="flex flex-col justify-center"
+            test-id='main-text'
             onMouseOver={() => { setMouseColor('rgba(0, 0, 0, 0.125)') }}
             onMouseLeave={() => { setMouseColor('rgba(0, 0, 0, 0.5)') }}
           >

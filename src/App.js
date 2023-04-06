@@ -34,6 +34,7 @@ const App = () => {
             : 'flex-2'}`}>
     
             <div className='fixed p-2 top-4 z-[1000]'
+              test-id='burger-menu'
               onMouseOver={() => {setMouseHeight('25px'); setMouseWidth('25px'); setMouseColor('rgba(191, 75, 30, 0.7)')}}
               onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseTop(-5); setMouseLeft(-10); setMouseColor('rgba(0, 0, 0, 0.5)')}}
             >

@@ -130,10 +130,10 @@ const Experience = () => {
     >
 
       <div className='ml-[50px] pl-[50px]' ref={div1Ref}>
-        <div className='text-2xl dark:text-yellow-200 text-orange-400 pb-[10px]'>{position}</div>
+        <div test-id="position" className='text-2xl dark:text-yellow-200 text-orange-400 pb-[10px]'>{position}</div>
         <div>
           <p className='dark:text-rose-200 pb-[5px] text-2xl'>In</p>
-          <p className='text-3xl text-violet-500'>QA Madness</p>
+          <p test-id="company" className='text-3xl text-violet-500'>QA Madness</p>
         </div>
       </div>
 
@@ -146,6 +146,7 @@ const Experience = () => {
         >
           {items.map((item, index) => (
             <ExperienceItem
+              test-id="exp-item"
               key={index}
               item={item}
               index={index}

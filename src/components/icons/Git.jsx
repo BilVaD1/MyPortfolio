@@ -9,6 +9,7 @@ const Git = ({ gitLink }) => {
 
     return (
         <a href={gitLink} 
+            test-id='git-btn'
             target="_blank"
             rel="noreferrer"
             className='cursor-none'

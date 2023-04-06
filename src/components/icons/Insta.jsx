@@ -9,6 +9,7 @@ const Insta = () => {
 
     return (
         <a href="https://www.instagram.com/bilvad1/" 
+            test-id='insta-btn'
             target="_blank"
             rel="noreferrer"
             className='cursor-none'

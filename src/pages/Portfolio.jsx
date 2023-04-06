@@ -112,6 +112,7 @@ const Portfolio = () => {
           <div          
             ref={activeCard === card.id ? ref : null}
             key={card.id}
+            test-id="project-item"
             className={`dark:text-slate-300
               rounded overflow-hidden 
               shadow-lg m-4 
@@ -130,6 +131,7 @@ const Portfolio = () => {
             {activeCard === card.id ? 
               <div className='text-3xl hover:text-4xl fixed right-0 top-0 duration-500 mt-[5px] mr-[5px]'>
                 <button onClick={handleClose}
+                  test-id="close-btn"
                   className="cursor-none"
                   onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px'); setMouseColor('rgba(49, 39, 245, 0.7)')}}
                   onMouseDown={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)')}}  

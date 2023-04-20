@@ -44,7 +44,7 @@ jobs:
         - name: Tests
           run: |
             cd repository-b
-            npm run cy:open
+            npm run cy:run
 
         - name: Stop local server
           run: kill $(ps aux | grep '[n]pm' | awk '{print $2}')

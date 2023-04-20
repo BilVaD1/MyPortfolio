@@ -13,11 +13,10 @@ jobs:
         run: npm install
         
       - name: Start the app
-        run: npm start &
+        run: |
+          npm start &
+          sleep 5
       # The '&' runs the command in the background, allowing the next step to run without waiting for it to finish.
-
-      - name: Wait for the app to start
-        run: npx wait-on http://localhost:3000
       
       - name: Cypress run
         uses: cypress-io/github-action@v5

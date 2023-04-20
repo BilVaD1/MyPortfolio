@@ -8,9 +8,15 @@ jobs:
     steps:
       - name: Checkout Tests
         uses: actions/checkout@v3
+        with:
+            repository: BilVaD1/MyPortfolio
+            path: portfolio_and_tests # This is the path to the folder on the virtual machine to the folder with main branch
+            ref: Tests # Name of repository
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd ..\
+          npm install
         
       - name: Start the app
         run: |

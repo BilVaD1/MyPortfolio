@@ -44,7 +44,7 @@ jobs:
         - name: Tests
           run: |
             cd repository-tests
-            npm run cy:run
+            npm run cy:run:remote
             
         - name: Archive Test Results
           if: failure() # That means the report will be created every time, whether the Tests step is failed.

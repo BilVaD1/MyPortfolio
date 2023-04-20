@@ -1,0 +1,10 @@
+{
+  "suites": 1,
+  "tests": 3,
+  "passes": 3,
+  "pending": 0,
+  "failures": 0,
+  "start": "2023-04-20T09:40:24.847Z",
+  "duration": 3978,
+  "file": "cypress\\e2e\\tests\\following_mouse.feature"
+}

@@ -2,12 +2,18 @@
   "devDependencies": {
     "@badeball/cypress-cucumber-preprocessor": "^16.0.3",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.0",
+    "@shelex/cypress-allure-plugin": "^2.38.3",
+    "cross-env": "^7.0.3",
     "cypress": "^12.9.0",
     "cypress-parallel": "^0.12.0"
   },
   "scripts": {
-    "cy:run": "cypress run -b chrome --headed",
+    "cy:run:local": "cross-env-shell LOCAL=true cypress run -b chrome --headed --env allure=true allureLogGherkin=true",
+    "cy:run:remote": "cypress run -b chrome --headed --env allure=true allureLogGherkin=true",
     "cy:open": "cypress open",
-    "cy:parallel" : "cypress-parallel -s cy:run -t 4 -d './cypress/e2e/*/*.feature' -m false"
+    "cy:parallel": "cypress-parallel -s cy:run:remote -t 4 -d './cypress/e2e/*/*.feature' -m false",
+    "allure_delete_results": "del allure-results",
+    "allure_update_results": "allure generate --clean",
+    "allure_open": "allure open"
   }
 }

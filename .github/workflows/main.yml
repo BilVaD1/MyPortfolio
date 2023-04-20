@@ -1,0 +1,29 @@
+name: E2E on Chrome
+
+on: [push]
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Tests
+        uses: actions/checkout@v3
+        with:
+            repository: BilVaD1/MyPortfolio
+            path: portfolio_and_tests # This is the path to the folder on the virtual machine to the folder with main branch
+            ref: Tests # Name of repository
+            
+      - name: Checkout React
+        uses: actions/checkout@v3
+        with:
+            repository: BilVaD1/MyPortfolio
+            path: portfolio_and_tests # This is the path to the folder on the virtual machine to the folder with main branch
+            ref: main # Name of repository
+      
+      - name: Cypress run
+        uses: cypress-io/github-action@v5
+        with:
+          project: ./portfolio_and_tests
+          browser: chrome
+          start: npm start
+          wait-on: "http://localhost:3000"

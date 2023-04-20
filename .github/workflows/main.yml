@@ -12,18 +12,18 @@ jobs:
             repository: BilVaD1/MyPortfolio
             path: portfolio_and_tests # This is the path to the folder on the virtual machine to the folder with main branch
             ref: Tests # Name of repository
-            
-      - name: Checkout React
-        uses: actions/checkout@v3
-        with:
-            repository: BilVaD1/MyPortfolio
-            path: portfolio_and_tests # This is the path to the folder on the virtual machine to the folder with main branch
-            ref: main # Name of repository
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Start the app
+        run: npm start &
+      # The '&' runs the command in the background, allowing the next step to run without waiting for it to finish.
+
+      - name: Wait for the app to start
+        run: npx wait-on http://localhost:3000
       
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
           project: ./portfolio_and_tests
           browser: chrome
-          start: npm start
-          wait-on: "http://localhost:3000"

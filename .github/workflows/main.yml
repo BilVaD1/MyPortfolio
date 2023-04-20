@@ -15,7 +15,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd ..
+          cd portfolio_and_tests
           npm install
         
       - name: Start the app

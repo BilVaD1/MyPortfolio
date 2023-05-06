@@ -1,0 +1,54 @@
+name: E2E on Chrome
+
+on: [push]
+
+jobs:
+  build-tests:
+    runs-on: ubuntu-latest # In which machine the image will be created
+    steps:
+    
+        - name: Checkout React # The name of process
+          uses: actions/checkout@v3  # The name of actions(here I specified the branch with React(main))
+          with:
+            repository: BilVaD1/MyPortfolio
+            path: repository-frontend # This is the path to the folder on the virtual machine to the folder with main branch
+            ref: main # Name of repository
+            
+        - name: Checkout Tests # The name of process
+          uses: actions/checkout@v3  # The name of actions(here I specified the branch with tests(Tests))
+          with:
+            repository: BilVaD1/MyPortfolio
+            path: repository-tests # This is the path to the folder on the virtual machine to the folder with Tests branch
+            ref: Tests # Name of repository
+            
+        - uses: actions/setup-node@v2 # setup node
+          with:
+            node-version: 18
+            
+        - name: Install from main
+          run: |
+            cd repository-frontend
+            npm install
+            
+        - name: startLocal in main
+          run: |
+            cd repository-frontend
+            npm run start &
+            sleep 5
+            
+        - name: Install tests dependencies from Tests branch
+          run: |
+            cd repository-tests
+            npm install
+            
+        - name: Tests
+          run: |
+            cd repository-tests
+            npm run cy:run:remote
+            
+        - name: Archive Test Results
+          if: failure() # That means the report will be created every time, whether the Tests step is failed.
+          uses: actions/upload-artifact@v3
+          with:
+            name: allureReport
+            path: repository-tests/allure-report

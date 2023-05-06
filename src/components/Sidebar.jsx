@@ -7,6 +7,8 @@ import { CgSun } from 'react-icons/cg'
 import day from '../data/day.png'
 import night from '../data/night.png'
 
+import Canvas from './canvas/index'
+
 import { useStateContext } from '../contexts/ContextProvider'
 
 const Sidebar = () => {
@@ -20,11 +22,20 @@ const Sidebar = () => {
 
   return (
     <div className='md:w-72 w-full' test-id='sidebar'>
-      <div className='flex flex-col mt-[100px] md:mt-[200px] md:ml-8 text-center md:text-start'>
 
-        <div>
+      <div
+        className='h-[300px]'
+        onMouseOver={() => {setMouseHeight('20px'); setMouseWidth('20px'); setMouseColor('rgba(99, 123, 125, 0.6)'); setMouseTop(-10)}}
+        onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)'); setMouseTop(-5)}}  
+      >
+        <Canvas />
+      </div>
+
+      <div className='flex flex-col mt-[20px] md:mt-[50px] md:ml-8 text-center md:text-start'>
+
+        {/* <div>
           <img test-id="image-item" className='rounded-full w-28 h-28 m-auto md:absolute top-0 md:right-[105px] md:top-[50px]' src={currentMode === 'Light' ? day : night} alt="" />
-        </div>
+        </div> */}
 
         <div className='mt-[50px] dark:text-white'>
           <NavLink
@@ -96,7 +107,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className='flex relative justify-between m-10 md:m-auto md:p-8 md:gap-16 bottom-[-70px]'>
+      <div className='flex relative justify-between m-10 md:m-auto md:p-8 md:gap-16 bottom-[-25px] md:bottom-[-70px]'>
         <div className=' p-2 bottom-20' style={{ zIndex: '1000'}}>
           <button type='button' 
             onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px'); setMouseColor('rgba(248, 246, 15, 1)')}}
@@ -121,7 +132,6 @@ const Sidebar = () => {
           </button>
         </div>
       </div>
-
     </div>
   )
 }

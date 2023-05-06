@@ -51,15 +51,13 @@ const App = () => {
             <div>
 
               <Routes>
-                {/* Dashboard */}
                 <Route path='/' element={<Home />}/>
                 <Route path='/AboutMe' element={<Home />}/>
-
-                {/* Pages */}
                 <Route path='/Experience' element={<Experience />}/>
                 <Route path='/Portfolio' element={<Portfolio />}/>
                 <Route path='/Contact' element={<Contact />}/>
               </Routes>
+              
             </div>
           </div>
         </div>

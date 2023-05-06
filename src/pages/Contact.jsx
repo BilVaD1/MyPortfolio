@@ -123,6 +123,7 @@ function Contact() {
       </div>
       <div className='dark:text-white mt-[15px]'>bilvad1@gmail.com</div>
       {displayAlert ? <MyAlert /> : ''}
+
     </div>
   );
 }

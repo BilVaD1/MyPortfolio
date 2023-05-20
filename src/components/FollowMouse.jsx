@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { useStateContext } from '../contexts/ContextProvider'
 
 function FollowMouse() {
-  const { mouseWidth, mouseHeight, mouseTop, mouseLeft, mouseColor, scrollPosition } = useStateContext();
+  const { mouseWidth, mouseHeight, mouseTop, mouseLeft, mouseColor, scrollPosition, position, setPosition } = useStateContext();
 
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  //const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     function handleMouseMove(event) {

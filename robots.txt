@@ -1,3 +1,0 @@
-User-agent: *
-Disallow:
-Sitemap: https://myportfoliobilvad.netlify.app/sitemap.xml

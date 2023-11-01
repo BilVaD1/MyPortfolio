@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { AiOutlineClose } from 'react-icons/ai'
 
+import { IconContext } from "react-icons";
+
 import { Git, External } from '../components';
 import { useStateContext } from '../contexts/ContextProvider'
 
@@ -9,8 +11,30 @@ import fuel from '../data/Fuel2.png'
 import dashboard from '../data/Dashboard.png'
 import magento from '../data/Magento2.png'
 import musicRoom from '../data/MusicRoom.png'
+import mouse from '../data/Mouse.png'
+import reHouse from '../data/rehouse.png'
 
 const cards = [
+  {
+    id: 7,
+    link: 'Project7',
+    href: 'https://re-house.ca/',
+    //linkOnGit: 'https://github.com/BilVaD1',
+    title: 'ReHouse',
+    description: 'Landing page for reconstruction company in Canada',
+    additionalDescription: "This website is fully-responsive landing page belongs to a reconstruction company in Canada. Crafted using React and Tailwind, it's hosted on Netlify.",
+    image: reHouse,
+  },
+  {
+    id: 6,
+    link: 'Project6',
+    href: 'https://www.npmjs.com/package/react-smart-mouse',
+    linkOnGit: 'https://github.com/BilVaD1/SmartMouse',
+    title: 'React FollowMouse Component',
+    description: 'A custom mouse cursor component with flexible settings',
+    additionalDescription: "The FollowMouse component is a React component that tracks the mouse cursor position and renders a customizable mouse follower element. It allows you to add interactive and visually appealing mouse effects to your web applications. Also, it understands which element it's hovering and apply the different related impacts on the component (e.g. button, a, img, span, p, etc...)",
+    image: mouse,
+  },
   {
     id: 1,
     link: 'Project1',
@@ -139,11 +163,15 @@ const Portfolio = () => {
                   onMouseDown={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)')}}  
                   onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)')}} 
                 >
-                  <AiOutlineClose />
+                  <IconContext.Provider value={{ color: "orange", className: "global-class-name" }}>
+                    <div>
+                      <AiOutlineClose />
+                    </div>
+                  </IconContext.Provider>
                 </button>
               </div> : ''}
 
-            <img className={`mt-[10px]
+            <img className={`mt-[10px] object-contain
               ${activeCard === card.id ? 'm-auto w-auto mt-[15px] h-auto duration-500' : 'w-full h-3/6'}`}
                 src={card.image} 
                 alt={card.title} 
@@ -175,7 +203,7 @@ const Portfolio = () => {
                   {card.additionalDescription}
                 </div>
                 <div className='text-4xl mt-[20px] mr-[15px] flex justify-end'>
-                  <Git gitLink={card.linkOnGit}/>
+                  {card.linkOnGit &&  <Git gitLink={card.linkOnGit}/>}
                 </div>
               </div>
             </div>

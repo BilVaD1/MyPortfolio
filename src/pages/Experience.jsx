@@ -7,8 +7,36 @@ import { ExperienceItem } from '../components'
 
 const items = [
   {
+    description: 
+    'Working as SDET for a tour agency company that provides complex ecosystems for various tour objects, such as: renting cars, transportation, booking hotels, tours, and others.',
+    role: 'SDET (Software Development Engineer in Test)',
+    responsibilities: [
+      'Creating the testing framework on Cypress from scratch',
+      'Maintaining the tests on Python(pytest)',
+      'Designing and writing back-end API tests(Python)',
+      'Preparing the project on NextJS for testing(creating API endpoints, adding data-testids)',
+      'Implementing the testing for Maizzle',
+      'Integrating tests to CI/CD(Github Actions + Vercel + Temporal)',
+      'Interacting with developers regarding the project matters',
+      'Creating changelogs for major product updates'
+    ],
+  },
+  {
+    description:
+      'Headless eCommerce on Shopify.',
+    role: 'Automation Quality Assurance Engineer',
+    responsibilities: [
+      'Creating a testing framework from scratch on Cypress',
+      'Preparing the React components for testing',
+      'Implementing the visual regression testing',
+      'Integrating tests to CI/CD(Github Actions + Vercel)',
+      'Created the test documentations'
+    ],
+  },
+  {
     description:
       'The cloud-based platform for creating and managing brands.',
+    role: 'Automation Quality Assurance Engineer',
     responsibilities: [
       'UI automation using WebdriverIO',
       'API testing and test data preparation with Postman.',
@@ -18,6 +46,7 @@ const items = [
   {
     description:
       'iOS and Android mobile application',
+    role: 'Manual and Automation Quality Assurance Engineer',
     responsibilities: [
       'Cross-platform testing',
       'UI mobile automation using WebdriverIO',
@@ -28,6 +57,7 @@ const items = [
   {
     description:
       'Magento Online Stores',
+    role: 'Manual Quality Assurance Engineer',
     responsibilities: [
       'Analysis of open issues in bug tracking system',
       'Planning personal testing activities for the sprint',
@@ -39,13 +69,15 @@ const items = [
 
 
 const Experience = () => {
-  const { setScrollPosition, setMouseColor, setMouseWidth, setMouseHeight } = useStateContext();
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const { setMouseColor, setMouseWidth, setMouseHeight, scrollTop, clientHeight, scrollHeight, setScrollTop, setClientHeight, setScrollHeight } = useStateContext();
+  //const [selectedIndex, setSelectedIndex] = useState(0);
   // const [scrollPosition, setScrollPosition] = useState(0);
-  const [position, setPosition] = useState('Automation QA');
+  const [position, setPosition] = useState('SDET');
+  const [company, setCompany] = useState('NeatByte');
 
   const div1Ref = useRef(null);
-  const div2Ref = useRef(null);
+  //const div2Ref = useRef(null);
+  const listRef = useRef([]);
   const containerRef = useRef(null);
 
   // Handle the scrollpostion
@@ -57,14 +89,22 @@ const Experience = () => {
     function handleScroll() {
       const newPosition = container.scrollLeft;
       // setScrollPosition(newPosition);
+      //console.log('newPosition: ', newPosition)
+      //console.log('calcPosition: ', calcPosition)
   
-      if (newPosition < calcPosition) {
+      if (newPosition < calcPosition && newPosition !== 0) {
         setPosition('Automation QA');
-      } else if (calcPosition < newPosition && newPosition < (calcPosition * 2)) {
+        setCompany('QA Madness')
+      } else if (calcPosition < newPosition && newPosition < (calcPosition * 3)) {
         setPosition('Automation QA'); 
-      } else if (newPosition > (calcPosition * 2)) { 
+        setCompany('QA Madness')
+      } else if (newPosition > (calcPosition * 3)) { 
         setPosition('Manual QA'); 
-      } 
+        setCompany('QA Madness')
+      } else if (newPosition < calcPosition && newPosition === 0) {
+        setPosition('SDET'); 
+        setCompany('NeatByte')
+      }
     }
   
     container.addEventListener('scroll', handleScroll);
@@ -74,19 +114,21 @@ const Experience = () => {
     };
   }, []);
 
+
+
   useEffect(() => {
     const container = containerRef.current;
 
     const handleScroll = () => {
-      setScrollPosition(container.scrollLeft);
+      //setScrollPosition(container.scrollLeft);
       setMouseColor(`rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 1)`)
       setMouseWidth('20px')
       setMouseHeight('20px')
     };
 
-    const resetLeft = () => {
+    /* const resetLeft = () => {
       setScrollPosition(prevCount => prevCount = 0);
-    };
+    }; */
 
     const resetStyles = () => {
       setMouseColor('rgba(0, 0, 0, 0.5)')
@@ -96,23 +138,52 @@ const Experience = () => {
 
     container.addEventListener('scroll', handleScroll);
     window.addEventListener('mouseup', resetStyles);
-    window.addEventListener('mousemove', resetLeft);
+    //window.addEventListener('mousemove', resetLeft);
 
     return () => {
       container.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mouseup', resetStyles);
-      window.removeEventListener('mousemove', resetLeft);
+      //window.removeEventListener('mousemove', resetLeft);
     };
   }, []);
 
-  /* const handlers = useSwipeable({
-    onSwipedLeft: () => setSelectedIndex(selectedIndex + 1),
-    onSwipedRight: () => setSelectedIndex(selectedIndex - 1),
-    preventDefaultTouchmoveEvent: true,
-    trackMouse: true,
-  }); */
+
+  const handleWheel = (e) => {
+    const container = containerRef.current;
+
+    // Check if the vertical scroll is at the top or bottom
+    const isVerticalScrollAtTop = scrollTop === 0;
+    const isVerticalScrollAtBottom = scrollTop + clientHeight ===  scrollHeight;
+    //console.log('El scroll top: ', scrollTop)
+    //console.log('El height: ', clientHeight)
+    //console.log('El scroll height: ', scrollHeight)
+
+    // Adjust the scrolling speed if needed
+    const scrollSpeed = 11;
+
+    if (e.deltaY !== 0) {
+      // If the vertical scroll is at the top or bottom, allow horizontal scrolling
+      if (isVerticalScrollAtBottom && e.deltaY > 0) {
+        setScrollTop(null)
+        setClientHeight(null)
+        setScrollHeight(null)
+        //console.log(e.deltaY)
+        container.scrollLeft += e.deltaY * scrollSpeed;
+        e.deltaY = 0
+      } else if (isVerticalScrollAtTop && e.deltaY < 0) {
+        setScrollTop(null)
+        setClientHeight(null)
+        setScrollHeight(null)
+        container.scrollLeft += e.deltaY * scrollSpeed;
+        e.deltaY = 0
+      }
+    }
+  };
+
+
+
   
-  const calculateDistance = () => {
+  /* const calculateDistance = () => {
     const div1Rect = div1Ref.current.getBoundingClientRect();
     const div2Rect = div2Ref.current.getBoundingClientRect();
 
@@ -121,25 +192,26 @@ const Experience = () => {
     );
 
     console.log(`The distance between the two divs is ${distance}px`);
-  };
+  }; */
 
 
   return (
     <div className="dark:text-white mt-[150px] pb-[50px]" 
-      onClick={calculateDistance}
+      //onClick={calculateDistance}
+      onWheel={handleWheel}
     >
 
       <div className='ml-[50px] pl-[50px]' ref={div1Ref}>
         <div test-id="position" className='text-2xl dark:text-yellow-200 text-orange-400 pb-[10px]'>{position}</div>
         <div>
           <p className='dark:text-rose-200 pb-[5px] text-2xl'>In</p>
-          <p test-id="company" className='text-3xl text-violet-500'>QA Madness</p>
+          <p test-id="company" className='text-3xl text-violet-500'>{company}</p>
         </div>
       </div>
 
 
         <div
-          className="container ml-[100px] mt-[150px] flex overflow-x-scroll rounded-lg gap-8 md:w-[750px] md:h-[400px] scroll-p-0.5"
+          className="container ml-[100px] mt-[150px] flex overflow-x-scroll rounded-lg gap-8 md:w-[950px] md:h-[500px] scroll-p-0.5"
           style={{ scrollSnapType: 'x mandatory', margin: '2rem auto' }}
           ref={containerRef}
           //{...handlers}
@@ -149,10 +221,9 @@ const Experience = () => {
               test-id="exp-item"
               key={index}
               item={item}
-              index={index}
-              selected={index === selectedIndex}
-              onClick={() => setSelectedIndex(index)}
-              ref={div2Ref}
+              myRef={listRef.current[index]}
+              //ref={div2Ref}
+              ref={(ref) => (listRef.current[index] = ref)}
             />
           ))}
         </div>

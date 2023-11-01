@@ -21,6 +21,9 @@ export const ContextProvider = ({ children }) => {
     const [mouseColor, setMouseColor] = useState('rgba(0, 0, 0, 0.5)');
     const [scrollPosition, setScrollPosition] = useState(0);
     const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [scrollTop, setScrollTop] = useState(null);
+    const [clientHeight, setClientHeight] = useState(null);
+    const [scrollHeight, setScrollHeight] = useState(null);
 
     const handleClick = (clicked) => {
         setIsClicked({...initialState, [clicked]:true})
@@ -43,7 +46,10 @@ export const ContextProvider = ({ children }) => {
                 mouseLeft, setMouseLeft,
                 mouseColor, setMouseColor,
                 scrollPosition, setScrollPosition,
-                position, setPosition
+                position, setPosition,
+                scrollTop, setScrollTop,
+                clientHeight, setClientHeight,
+                scrollHeight, setScrollHeight
 
             } /* Transport states in each Component */}
         >

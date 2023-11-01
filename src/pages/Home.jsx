@@ -30,11 +30,12 @@ function Home() {
             onMouseOver={() => { setMouseColor('rgba(0, 0, 0, 0.125)') }}
             onMouseLeave={() => { setMouseColor('rgba(0, 0, 0, 0.5)') }}
           >
-            <h2 className="text-2xl font-bold dark:text-white text-gray-800 mb-10">Hi, I'm Vadym <br /> (React developer/Automation QA)</h2>
+            <h2 className="text-2xl font-bold dark:text-white text-gray-800 mb-10">Hi, I'm Vadym <br /> (Full Stack Developer/Automation QA)</h2>
             <p className="text-gray-700 dark:text-white mb-4">
-            Experienced Automation QA Engineer with a strong interest in React development. Skilled in JavaScript (React , WebdriverIO, Cypress) and Python (Selenium, Pytest, Django), with a focus on designing and implementing automated tests. Currently working as an Automation QA Engineer at QA Madness, responsible for UI automation using WebdriverIO, API testing, and test data preparation.</p>
-            <p className="text-gray-700 dark:text-white mb-4">Looking for a challenging role in React development to leverage my skills and passion for creating innovative solutions.</p>
-            <p className="text-gray-700 dark:text-white mb-4">If you're interested in learning more about me, please feel free to contact me.</p>
+            I am experienced Full Stack Developer and Automation QA Engineer with a strong interest in a development. Skilled in JavaScript (WebdriverIO, Cypress, Playwright, Cucumber, React, NextJS, Three.js) and Python (Selenium, Pytest, Playwright, Behave, Django). Currently working as an Automation QA Engineer at QA Madness, and SDET in NeatByte.</p>
+            <p className="text-gray-700 dark:text-white mb-4">Having a strong foundation in React and Django, I am eager to take on challenging projects that allow me to leverage my skills and contribute to the creation of innovative and user-friendly websites. Whether it's building responsive and dynamic user interfaces with React or crafting robust backend solutions with Django, I am confident in my ability to deliver high-quality results.</p>
+            <p className="text-gray-700 dark:text-white mb-4">Additionally, I am open to considering positions in Automation QA, where I can apply my attention to detail and passion for ensuring the seamless functionality of software through thorough testing processes. I believe in the importance of quality assurance in the software development lifecycle and am committed to delivering reliable and efficient solutions.</p>
+            <p className="text-gray-700 dark:text-white mb-4">If you have any opportunities or know of someone who is looking for a dedicated and versatile individual to join their team, I would love to connect and discuss how my skills align with their needs, please feel free to contact me.</p>
           </div>
 
           <div className='text-4xl flex gap-6 justify-end mr-[20px] col-end-3'>

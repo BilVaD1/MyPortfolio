@@ -1,7 +1,7 @@
 import React from 'react'
 import { AiOutlineDownload } from 'react-icons/ai'
 
-import cv from '../data/CV_Frontend_Vadym.pdf';
+import cv from '../data/CV_QA_Vadym.pdf';
 
 const DownloadButton = () => {
 
@@ -14,7 +14,8 @@ const DownloadButton = () => {
 
     return (
         <button
-            className='md:text-4xl 
+            className='
+                md:text-4xl 
                 text-3xl 
                 cursor-none 
                 flex 
@@ -55,7 +56,8 @@ const DownloadButton = () => {
                 after:border-red-400/50 
                 after:scale-125 
                 after:hover:opacity-100 
-                after:hover:scale-100'
+                after:hover:scale-100
+            '
             onClick={downloadCV}
         >
             <p className='md:text-2xl text-xl mr-4'>Download my CV</p>

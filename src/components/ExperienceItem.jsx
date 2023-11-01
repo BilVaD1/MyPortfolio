@@ -9,7 +9,7 @@ const ExperienceItem = forwardRef(({ item, selected, onClick, myRef }, ref) => {
       setScrollTop(myRef.scrollTop)
       setClientHeight(myRef.clientHeight)
       setScrollHeight(myRef.scrollHeight)
-    }
+    } 
   
   
     return (

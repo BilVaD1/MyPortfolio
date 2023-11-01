@@ -1,6 +1,5 @@
 import React, { forwardRef } from 'react'
 import { useStateContext } from '../contexts/ContextProvider'
-import { useEffect } from 'react';
 
 
 const ExperienceItem = forwardRef(({ item, selected, onClick, myRef }, ref) => {

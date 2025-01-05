@@ -8,6 +8,21 @@ import { ExperienceItem } from '../components'
 const items = [
   {
     description: 
+    "Working as a Full Stack Developer at LightForce, a company revolutionizing digital orthodontics with advanced technologies and 3D visualization solutions.",
+    role: "Full Stack Developer",
+    responsibilities: [
+      "Developing interactive and responsive user interfaces using Angular",
+      "Creating real-time 3D visualizations of orthodontic treatments with Three.js",
+      "Building and maintaining scalable backend services using Express",
+      "Generating PDFs to visualize complex database information for reporting",
+      "Collaborating closely with AWS services like CloudFront, S3, CloudWatch, and Lambda Functions for cloud integration and optimization",
+      "Presenting demos to stakeholders and teams to showcase application features and progress",
+      "Teaching and mentoring new team members to ensure smooth onboarding",
+      "Working in agile teams to integrate innovative features and resolve technical challenges"
+    ]
+  },  
+  {
+    description: 
     'Working as SDET for a tour agency company that provides complex ecosystems for various tour objects, such as: renting cars, transportation, booking hotels, tours, and others.',
     role: 'SDET (Software Development Engineer in Test)',
     responsibilities: [
@@ -95,15 +110,18 @@ const Experience = () => {
       if (newPosition < calcPosition && newPosition !== 0) {
         setPosition('Automation QA');
         setCompany('QA Madness')
-      } else if (calcPosition < newPosition && newPosition < (calcPosition * 3)) {
+      } else if (calcPosition < newPosition && newPosition < (calcPosition * 2)) {
+        setPosition('SDET'); 
+        setCompany('NeatByte') 
+      } else if (calcPosition < newPosition && newPosition < (calcPosition * 4)) {
         setPosition('Automation QA'); 
         setCompany('QA Madness')
-      } else if (newPosition > (calcPosition * 3)) { 
+      } else if (newPosition > (calcPosition * 4)) { 
         setPosition('Manual QA'); 
         setCompany('QA Madness')
       } else if (newPosition < calcPosition && newPosition === 0) {
-        setPosition('SDET'); 
-        setCompany('NeatByte')
+        setPosition('FullStack'); 
+        setCompany('LightForce')
       }
     }
   

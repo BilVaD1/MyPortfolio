@@ -1,14 +1,14 @@
 import React from 'react'
 import { AiOutlineDownload } from 'react-icons/ai'
 
-import cv from '../data/CV_QA_Vadym.pdf';
+import cv from '../data/CV_FullStack_Vadym_2025.pdf';
 
 const DownloadButton = () => {
 
     function downloadCV() {
         const link = document.createElement('a');
         link.href = cv;
-        link.download = 'my-cv.pdf';
+        link.download = 'CV_FullStack_Vadym_2025.pdf';
         link.click();
       }
 

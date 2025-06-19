@@ -121,7 +121,9 @@ function Contact() {
             <LinkedinIcon />
             <Insta />
       </div>
-      <div className='dark:text-white mt-[15px]'>bilvad1@gmail.com</div>
+      <div className='dark:text-white mt-[15px]'><a href='mailto:bilvad1@gmail.com' className='cursor-none'
+      onMouseOver={() => {setMouseHeight('20px'); setMouseWidth('30px'); setMouseColor('rgba(67, 39, 245, 0.4)'); setMouseTop(-10)}}
+      onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)'); setMouseTop(-5)}}>bilvad1@gmail.com</a></div>
       {displayAlert ? <MyAlert /> : ''}
 
     </div>

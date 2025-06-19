@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useRef } from 'react'
-import { useStateContext } from '../contexts/ContextProvider'
-
+import React, { useState } from 'react'
 import { ExperienceItem } from '../components'
-
+import { useStateContext } from '../contexts/ContextProvider'
 
 const items = [
   {
@@ -81,174 +79,84 @@ const items = [
   },
 ];
 
-
-
 const Experience = () => {
-  const { setMouseColor, setMouseWidth, setMouseHeight, scrollTop, clientHeight, scrollHeight, setScrollTop, setClientHeight, setScrollHeight } = useStateContext();
-  //const [selectedIndex, setSelectedIndex] = useState(0);
-  // const [scrollPosition, setScrollPosition] = useState(0);
-  const [position, setPosition] = useState('SDET');
-  const [company, setCompany] = useState('NeatByte');
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const { setMouseColor, setMouseWidth, setMouseHeight } = useStateContext();
 
-  const div1Ref = useRef(null);
-  //const div2Ref = useRef(null);
-  const listRef = useRef([]);
-  const containerRef = useRef(null);
-
-  // Handle the scrollpostion
-  useEffect(() => {
-    const container = containerRef.current;
-    const maxScrollLeft = container.scrollWidth - container.clientWidth;
-    const calcPosition = maxScrollLeft / items.length;
-  
-    function handleScroll() {
-      const newPosition = container.scrollLeft;
-      // setScrollPosition(newPosition);
-      //console.log('newPosition: ', newPosition)
-      //console.log('calcPosition: ', calcPosition)
-  
-      if (newPosition < calcPosition && newPosition !== 0) {
-        setPosition('Automation QA');
-        setCompany('QA Madness')
-      } else if (calcPosition < newPosition && newPosition < (calcPosition * 2)) {
-        setPosition('SDET'); 
-        setCompany('NeatByte') 
-      } else if (calcPosition < newPosition && newPosition < (calcPosition * 4)) {
-        setPosition('Automation QA'); 
-        setCompany('QA Madness')
-      } else if (newPosition > (calcPosition * 4)) { 
-        setPosition('Manual QA'); 
-        setCompany('QA Madness')
-      } else if (newPosition < calcPosition && newPosition === 0) {
-        setPosition('FullStack'); 
-        setCompany('LightForce')
-      }
-    }
-  
-    container.addEventListener('scroll', handleScroll);
-  
-    return () => {  // Cleanup function to remove event listener on unmounting of component 
-      container.removeEventListener('scroll', handleScroll);   
-    };
-  }, []);
-
-
-
-  useEffect(() => {
-    const container = containerRef.current;
-
-    const handleScroll = () => {
-      //setScrollPosition(container.scrollLeft);
-      setMouseColor(`rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 1)`)
-      setMouseWidth('20px')
-      setMouseHeight('20px')
-    };
-
-    /* const resetLeft = () => {
-      setScrollPosition(prevCount => prevCount = 0);
-    }; */
-
-    const resetStyles = () => {
-      setMouseColor('rgba(0, 0, 0, 0.5)')
-      setMouseWidth('35px')
-      setMouseHeight('35px')
-    }
-
-    container.addEventListener('scroll', handleScroll);
-    window.addEventListener('mouseup', resetStyles);
-    //window.addEventListener('mousemove', resetLeft);
-
-    return () => {
-      container.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('mouseup', resetStyles);
-      //window.removeEventListener('mousemove', resetLeft);
-    };
-  }, []);
-
-
-  const handleWheel = (e) => {
-    const container = containerRef.current;
-
-    // Check if the vertical scroll is at the top or bottom
-    const isVerticalScrollAtTop = scrollTop === 0;
-    const isVerticalScrollAtBottom = scrollTop + clientHeight ===  scrollHeight;
-    //console.log('El scroll top: ', scrollTop)
-    //console.log('El height: ', clientHeight)
-    //console.log('El scroll height: ', scrollHeight)
-
-    // Adjust the scrolling speed if needed
-    const scrollSpeed = 11;
-
-    if (e.deltaY !== 0) {
-      // If the vertical scroll is at the top or bottom, allow horizontal scrolling
-      if (isVerticalScrollAtBottom && e.deltaY > 0) {
-        setScrollTop(null)
-        setClientHeight(null)
-        setScrollHeight(null)
-        //console.log(e.deltaY)
-        container.scrollLeft += e.deltaY * scrollSpeed;
-        e.deltaY = 0
-      } else if (isVerticalScrollAtTop && e.deltaY < 0) {
-        setScrollTop(null)
-        setClientHeight(null)
-        setScrollHeight(null)
-        container.scrollLeft += e.deltaY * scrollSpeed;
-        e.deltaY = 0
-      }
-    }
+  const handlePrev = () => {
+    setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
+  const handleNext = () => {
+    setSelectedIndex((prev) => (prev < items.length - 1 ? prev + 1 : prev));
+  };
 
+  const handleDotClick = (idx) => {
+    setSelectedIndex(idx);
+  };
 
-  
-  /* const calculateDistance = () => {
-    const div1Rect = div1Ref.current.getBoundingClientRect();
-    const div2Rect = div2Ref.current.getBoundingClientRect();
-
-    const distance = Math.sqrt(
-      Math.pow(div1Rect.x - div2Rect.x, 2) + Math.pow(div1Rect.y - div2Rect.y, 2)
-    );
-
-    console.log(`The distance between the two divs is ${distance}px`);
-  }; */
-
+  // Mouse effect handlers
+  const handleMouseOver = (size) => {
+    setMouseWidth(size);
+    setMouseHeight(size);
+    setMouseColor('rgba(255, 140, 0, 0.7)'); // orange
+  };
+  const handleMouseLeave = () => {
+    setMouseWidth('35px');
+    setMouseHeight('35px');
+    setMouseColor('rgba(0, 0, 0, 0.5)');
+  };
 
   return (
-    <div className="dark:text-white mt-[150px] pb-[50px]" 
-      //onClick={calculateDistance}
-      onWheel={handleWheel}
-    >
-
-      <div className='ml-[50px] pl-[50px]' ref={div1Ref}>
-        <div test-id="position" className='text-2xl dark:text-yellow-200 text-orange-400 pb-[10px]'>{position}</div>
+    <div className="dark:text-white mt-[100px] pb-[50px] flex flex-col items-center">
+      <div className="mb-6 text-center">
+        <div className="text-2xl dark:text-yellow-200 text-orange-400 pb-2 font-semibold">
+          {items[selectedIndex].role}
+        </div>
         <div>
-          <p className='dark:text-rose-200 pb-[5px] text-2xl'>In</p>
-          <p test-id="company" className='text-3xl text-violet-500'>{company}</p>
+          <p className="dark:text-rose-200 pb-1 text-xl">In</p>
+          <p className="text-2xl text-violet-500 font-bold">{items[selectedIndex].company || ''}</p>
         </div>
       </div>
-
-
-        <div
-          className="container ml-[100px] mt-[150px] flex overflow-x-scroll rounded-lg gap-8 md:w-[950px] md:h-[500px] scroll-p-0.5"
-          style={{ scrollSnapType: 'x mandatory', margin: '2rem auto' }}
-          ref={containerRef}
-          //{...handlers}
+      <div className="relative w-full max-w-2xl flex items-center justify-center">
+        <button
+          onClick={handlePrev}
+          disabled={selectedIndex === 0}
+          className={`absolute cursor-none left-0 z-10 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-md hover:bg-orange-200 transition disabled:opacity-40 disabled:cursor-not-allowed`}
+          aria-label="Previous Experience"
+          onMouseOver={() => handleMouseOver('20px')}
+          onMouseLeave={handleMouseLeave}
         >
-          {items.map((item, index) => (
-            <ExperienceItem
-              test-id="exp-item"
-              key={index}
-              item={item}
-              myRef={listRef.current[index]}
-              //ref={div2Ref}
-              ref={(ref) => (listRef.current[index] = ref)}
-            />
-          ))}
+          &#8592;
+        </button>
+        <div className="w-full flex justify-center">
+          <ExperienceItem item={items[selectedIndex]} />
         </div>
-
+        <button
+          onClick={handleNext}
+          disabled={selectedIndex === items.length - 1}
+          className={`absolute cursor-none right-0 z-10 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-md hover:bg-orange-200 transition disabled:opacity-40 disabled:cursor-not-allowed`}
+          aria-label="Next Experience"
+          onMouseOver={() => handleMouseOver('20px')}
+          onMouseLeave={handleMouseLeave}
+        >
+          &#8594;
+        </button>
+      </div>
+      <div className="flex gap-2 mt-6">
+        {items.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleDotClick(idx)}
+            className={`w-3 h-3 cursor-none rounded-full border-2 ${selectedIndex === idx ? 'bg-orange-400 border-orange-400' : 'bg-gray-300 dark:bg-gray-700 border-gray-400'} transition`}
+            aria-label={`Go to experience ${idx + 1}`}
+            onMouseOver={() => handleMouseOver('10px')}
+            onMouseLeave={handleMouseLeave}
+          />
+        ))}
+      </div>
     </div>
   )
 }
-
 
 export default Experience

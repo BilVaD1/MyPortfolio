@@ -1,0 +1,103 @@
+/* ---- 2.5D About Me scene animations ---- */
+
+/* Sea */
+@keyframes wave-drift {
+  to { transform: translateX(-50%); }
+}
+@keyframes wave-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+@keyframes boat-bob {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(7px) rotate(2.5deg); }
+}
+@keyframes boat-drift {
+  from { transform: translateX(-4vw); }
+  to { transform: translateX(4vw); }
+}
+@keyframes glint-shimmer {
+  0%, 100% { opacity: 0.55; transform: scaleX(1); }
+  50% { opacity: 0.28; transform: scaleX(0.72); }
+}
+/* City / balloons */
+@keyframes balloon-float {
+  from { transform: translateY(0) rotate(-2deg); }
+  to { transform: translateY(-22px) rotate(2.5deg); }
+}
+@keyframes flame-flicker {
+  0%, 100% { opacity: 0.95; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.75); }
+}
+@keyframes beam-pulse {
+  0%, 100% { opacity: 0.26; }
+  50% { opacity: 0.1; }
+}
+
+/* Birds & planes */
+@keyframes bird-fly {
+  from { transform: translateX(0); }
+  to { transform: translateX(115vw); }
+}
+@keyframes bird-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-16px); }
+}
+.bird-wing-l,
+.bird-wing-r {
+  transform-box: fill-box;
+}
+.bird-wing-l {
+  transform-origin: 100% 100%;
+  animation: flap-l 0.85s ease-in-out infinite;
+}
+.bird-wing-r {
+  transform-origin: 0% 100%;
+  animation: flap-r 0.85s ease-in-out infinite;
+}
+@keyframes flap-l {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(40deg); }
+}
+@keyframes flap-r {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-40deg); }
+}
+@keyframes blink {
+  0%, 55% { opacity: 1; }
+  60%, 100% { opacity: 0; }
+}
+
+/* Sky */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+@keyframes shoot {
+  0% { transform: translate3d(0, 0, 0) rotate(-36deg) scaleX(0.3); opacity: 0; }
+  4% { opacity: 1; }
+  13% { transform: translate3d(-280px, 200px, 0) rotate(-36deg) scaleX(1); opacity: 0; }
+  100% { transform: translate3d(-280px, 200px, 0) rotate(-36deg) scaleX(1); opacity: 0; }
+}
+@keyframes glow-breathe {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+@keyframes cloud-drift {
+  from { transform: translateX(-25vw); }
+  to { transform: translateX(115vw); }
+}
+
+/* Avatar & UI */
+@keyframes avatar-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-scene *,
+  .about-scene *::before,
+  .about-scene *::after {
+    animation: none !important;
+  }
+}

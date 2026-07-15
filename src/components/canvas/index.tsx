@@ -1,13 +1,13 @@
 import React, { Suspense, useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, PerspectiveCamera, Stars } from '@react-three/drei'
-import Moon from './Moon'
+import { Stars } from '@react-three/drei'
 import Creature from './Creature'
 
 import { useStateContext } from '../../contexts/ContextProvider'
 
 const CanvasModel = () => {
     const { currentMode } = useStateContext();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [Light, setLight] = useState(1);
 
     useEffect(() => {

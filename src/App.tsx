@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import  { RxHamburgerMenu } from 'react-icons/rx'
 import { CSSTransition } from 'react-transition-group'
-import SmartMouse from 'react-smart-mouse'
+import SmartMouse, { ElementStyle } from 'react-smart-mouse'
 
 import { Sidebar } from './components'
 import { Home, Portfolio, Contact, Experience, SmartMouseDemo } from './pages'
@@ -11,7 +11,7 @@ import './App.css'
 import { useStateContext } from './contexts/ContextProvider'
 
 // Keep untouched elements identical to the old hardcoded cursor (35px, black)
-const neutralStyle = { color: 'rgba(0, 0, 0, 0.5)', width: '35px', height: '35px' }
+const neutralStyle: ElementStyle = { color: 'rgba(0, 0, 0, 0.5)', width: '35px', height: '35px' }
 
 const App = () => {
   const { activeMenu, currentMode, setActiveMenu, setScreenSize, screenSize, mouseConfig } = useStateContext();
@@ -22,12 +22,15 @@ const App = () => {
     handleResize();
 
     return () => window.removeEventListener('resize', handleResize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const isDesktop = (screenSize ?? 0) >= 900;
 
   return (
     <div className={currentMode === 'Dark' ? 'dark' : 'light'}>
       <BrowserRouter>
-        {screenSize >= 900 && (
+        {isDesktop && (
           <SmartMouse
             pStyle={neutralStyle}
             spanStyle={neutralStyle}
@@ -44,7 +47,7 @@ const App = () => {
         )}
         <div className='flex relative dark:bg-main-dark-bg'>
 
-          {screenSize >= 900 ? <SideTransition /> : <NoTransition />}
+          {isDesktop ? <SideTransition /> : <NoTransition />}
 
           <div className={`dark:bg-main-dark-bg duration-700 bg-main-bg min-h-screen w-full ${activeMenu
             ? 'md:ml-72'
@@ -86,7 +89,7 @@ export default App
 
 const SideTransition = () => {
   const { activeMenu } = useStateContext();
-  const nodeRef = useRef(null);
+  const nodeRef = useRef<HTMLDivElement>(null);
 
   return (
     <CSSTransition nodeRef={nodeRef}
@@ -101,7 +104,7 @@ const SideTransition = () => {
       unmountOnExit
     >
         <div ref={nodeRef} className='h-screen fixed overflow-auto sidebar dark:bg-secondary-dark-bg bg-white duration-700'
-          style={{ zIndex: '2000'}}
+          style={{ zIndex: 2000 }}
         >
           <Sidebar/>
         </div>
@@ -116,7 +119,7 @@ const NoTransition = () => {
     <div>
       {activeMenu &&
         <div className='md:w-72 w-full h-screen fixed overflow-auto sidebar dark:bg-secondary-dark-bg bg-white duration-700'
-          style={{ zIndex: '2000'}}
+          style={{ zIndex: 2000 }}
         >
           <Sidebar/>
         </div>}

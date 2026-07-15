@@ -4,9 +4,6 @@ import { NavLink } from 'react-router-dom'
 import { RxMoon } from 'react-icons/rx'
 import { CgSun } from 'react-icons/cg'
 
-import day from '../data/day.png'
-import night from '../data/night.png'
-
 import Canvas from './canvas/index'
 
 import { useStateContext } from '../contexts/ContextProvider'
@@ -19,7 +16,7 @@ const Sidebar = () => {
   const { setCurrentMode, currentMode, screenSize, activeMenu, setActiveMenu } = useStateContext();
 
   const handleCloseSideBar = () => {
-    if(activeMenu && screenSize <= 900) {
+    if(activeMenu && screenSize !== undefined && screenSize <= 900) {
       setActiveMenu(false)
     }
   }
@@ -57,7 +54,7 @@ const Sidebar = () => {
       </div>
 
       <div className='flex relative justify-between m-10 md:m-auto md:p-8 md:gap-16 bottom-[-25px] md:bottom-[-70px]'>
-        <div className=' p-2 bottom-20' style={{ zIndex: '1000'}}>
+        <div className=' p-2 bottom-20' style={{ zIndex: 1000 }}>
           <button type='button'
             data-mousecustom={JSON.stringify({ width: '15px', height: '15px', color: 'rgba(248, 246, 15, 1)' })}
             id="light"
@@ -68,7 +65,7 @@ const Sidebar = () => {
           </button>
         </div>
 
-        <div className=' p-2 bottom-20 left-40 ' style={{ zIndex: '1000'}}>
+        <div className=' p-2 bottom-20 left-40 ' style={{ zIndex: 1000 }}>
           <button type='button'
           data-mousecustom={JSON.stringify({ width: '15px', height: '15px', color: 'rgba(122, 39, 245, 1)' })}
           id="dark"

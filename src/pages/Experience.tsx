@@ -1,10 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react'
 import { ExperienceItem } from '../components'
+import type { ExperienceData } from '../components'
 
-const items = [
+const items: ExperienceData[] = [
   {
-    description: 
+    description:
     "Working as a Full Stack Developer at LightForce, a company revolutionizing digital orthodontics with advanced technologies and 3D visualization solutions.",
     role: "Full Stack Developer",
     responsibilities: [
@@ -17,9 +17,9 @@ const items = [
       "Teaching and mentoring new team members to ensure smooth onboarding",
       "Working in agile teams to integrate innovative features and resolve technical challenges"
     ]
-  },  
+  },
   {
-    description: 
+    description:
     'Working as SDET for a tour agency company that provides complex ecosystems for various tour objects, such as: renting cars, transportation, booking hotels, tours, and others.',
     role: 'SDET (Software Development Engineer in Test)',
     responsibilities: [
@@ -92,7 +92,7 @@ const Experience = () => {
     setSelectedIndex((prev) => (prev < items.length - 1 ? prev + 1 : prev));
   };
 
-  const handleDotClick = (idx) => {
+  const handleDotClick = (idx: number) => {
     setSelectedIndex(idx);
   };
 

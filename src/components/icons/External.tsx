@@ -1,7 +1,7 @@
 import React from 'react'
 import { FiExternalLink } from 'react-icons/fi'
 
-const External = ({ link }) => {
+const External = ({ link }: { link: string }) => {
     return (
         <a href={link}
             target="_blank"

@@ -14,7 +14,19 @@ import musicRoom from '../data/MusicRoom.png'
 import mouse from '../data/Mouse.png'
 import reHouse from '../data/rehouse.png'
 
-const cards = [
+interface Card {
+  id: number;
+  link: string;
+  href: string;
+  linkOnGit?: string;
+  demoLink?: string;
+  title: string;
+  description: string;
+  additionalDescription: string;
+  image: string;
+}
+
+const cards: Card[] = [
   {
     id: 7,
     link: 'Project7',
@@ -55,7 +67,7 @@ const cards = [
     description: 'This is the app on Python for calculating the amount of fuel or oil that is left onboard.',
     additionalDescription: "In this app, you can specify the fuel/oil tank, enter the measurements(sounding) of the selected tank, and receive the amount of fuel/oil left on the vessel in the m3 and tonnes. Also you can generate the summary report(xlsx) for all ship's tanks.",
     image: fuel,
-  }, 
+  },
   {
     id: 3,
     link: 'Project3',
@@ -94,9 +106,9 @@ const textMouseStyle = JSON.stringify({ width: '15px', height: '15px', color: 'r
 const Portfolio = () => {
   const [activeCard, setActiveCard] = useState(0);
 
-  const ref = useRef();
+  const ref = useRef<HTMLDivElement>(null);
 
-  const handleClose = (e) => {
+  const handleClose = (e?: React.MouseEvent) => {
     // if statement to handle the e.stopPropagation(); only when I click on the close, instead of when I click outside the project cart
     if (e !== undefined) {
       e.stopPropagation(); // It's using to prevent onClick on the parent element
@@ -104,19 +116,19 @@ const Portfolio = () => {
     setActiveCard(0)
   }
 
-  const handleCardClick = (id) => {
+  const handleCardClick = (id: number) => {
     setActiveCard(id);
     setTimeout(() => executeScroll(), 500)
   };
 
   const executeScroll = () => {
-    ref.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }  
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   // Для закрытия окна по клику вне его
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (ref.current && !ref.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
         handleClose()
       }
     }
@@ -137,25 +149,25 @@ const Portfolio = () => {
       <div className="flex flex-wrap justify-center pt-[50px]" id='portfolio'>
 
         {cards.map(card => (
-          <div          
+          <div
             ref={activeCard === card.id ? ref : null}
             key={card.id}
             test-id="project-item"
             className={`dark:text-slate-300
-              rounded overflow-hidden 
-              shadow-lg m-4 
+              rounded overflow-hidden
+              shadow-lg m-4
               dark:drop-shadow-2xl
-              hover:bg-gray-100 
-              duration-700 
-              grayscale 
-              hover:grayscale-0 
+              hover:bg-gray-100
+              duration-700
+              grayscale
+              hover:grayscale-0
               hover:dark:text-slate-900
               ${activeCard === card.id ? 'max-h-[750px] max-w-[800px] overflow-y-scroll relative dark:text-slate-900 bg-gray-100 grayscale-0' : 'max-w-sm hover:mt-[50px] hover:mr-20 hover:max-h-[450px] max-h-[400px]'}
             `}
             onClick={() => handleCardClick(card.id)}
             data-mousecustom={cardMouseStyle}
           >
-            {activeCard === card.id ? 
+            {activeCard === card.id ?
               <div className='text-3xl hover:text-4xl fixed right-0 top-0 duration-500 mt-[5px] mr-[5px]'>
                 <button onClick={handleClose}
                   test-id="close-btn"
@@ -172,12 +184,12 @@ const Portfolio = () => {
 
             <img className={`mt-[10px] object-contain
               ${activeCard === card.id ? 'm-auto w-auto mt-[15px] h-auto duration-500' : 'w-full h-3/6'}`}
-                src={card.image} 
-                alt={card.title} 
+                src={card.image}
+                alt={card.title}
             />
 
             <div className="px-6 py-4">
-              {activeCard === card.id ? 
+              {activeCard === card.id ?
                 <div className={`font-bold flex justify-between mr-[15px]
                   ${activeCard === card.id ? 'text-3xl mb-[15px] mt-[20px]' : 'text-xl'}
                   mb-2`}
@@ -190,7 +202,7 @@ const Portfolio = () => {
               </p>
 
               <div className={`
-                ${activeCard === card.id ? 'hover:block mt-[20px]' : 'hidden'}`}            
+                ${activeCard === card.id ? 'hover:block mt-[20px]' : 'hidden'}`}
               >
                 <div data-mousecustom={textMouseStyle}>
                   {card.additionalDescription}

@@ -1,9 +1,16 @@
 import React from 'react'
 import { useStateContext } from '../contexts/ContextProvider'
+import type { MouseConfig } from '../contexts/ContextProvider'
 
 import dashboard from '../data/Dashboard.png'
 
-const Section = ({ title, children, hint }) => (
+interface SectionProps {
+  title: string;
+  hint?: string;
+  children: React.ReactNode;
+}
+
+const Section = ({ title, children, hint }: SectionProps) => (
   <div className='mb-12'>
     <h2 className='text-2xl font-bold mb-1 dark:text-yellow-200 text-orange-500'>{title}</h2>
     {hint && <p className='text-sm mb-4 text-gray-500 dark:text-gray-400'>{hint}</p>}
@@ -14,7 +21,8 @@ const Section = ({ title, children, hint }) => (
 const SmartMouseDemo = () => {
   const { mouseConfig, setMouseConfig } = useStateContext();
 
-  const updateConfig = (key, value) => setMouseConfig((prev) => ({ ...prev, [key]: value }))
+  const updateConfig = <K extends keyof MouseConfig>(key: K, value: MouseConfig[K]) =>
+    setMouseConfig((prev) => ({ ...prev, [key]: value }))
 
   return (
     <div className='dark:text-white mt-[100px] pb-[100px] max-w-4xl mx-auto px-6'>

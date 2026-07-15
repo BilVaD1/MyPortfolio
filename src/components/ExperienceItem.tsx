@@ -1,6 +1,13 @@
 import React from 'react'
 
-const ExperienceItem = ({ item }) => {
+export interface ExperienceData {
+  description: string;
+  role: string;
+  company?: string;
+  responsibilities: string[];
+}
+
+const ExperienceItem = ({ item }: { item: ExperienceData }) => {
   return (
     <div
       className="bg-white dark:bg-gray-900 shadow-xl rounded-2xl p-8 w-full max-w-xl transition-all duration-300 border border-gray-200 dark:border-gray-700"

@@ -1,25 +1,27 @@
 import { useEffect, useState, useRef } from 'react'
+import * as THREE from 'three'
 import useSpline from '@splinetool/r3f-spline'
 import { OrthographicCamera } from '@react-three/drei'
 
-import { useFrame } from '@react-three/fiber'
+import { useFrame, ThreeElements } from '@react-three/fiber'
 
-export default function Creature({ ...props }) {
+export default function Creature({ ...props }: ThreeElements['group']) {
     const [up, setUp] = useState(true);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [axisZ, setAxisZ] = useState(true);
     const [axisX, setAxisX] = useState(true);
     const [handUp, setHandUp] = useState(false);
 
-    const ref = useRef()
-    const body = useRef()
-    const camera = useRef()
-    const handRight = useRef()
-    const handLeft = useRef()
+    const ref = useRef<THREE.Group>(null)
+    const body = useRef<THREE.Group>(null)
+    const camera = useRef<THREE.OrthographicCamera>(null)
+    const handRight = useRef<THREE.Mesh>(null)
+    const handLeft = useRef<THREE.Mesh>(null)
     // Cursor position tracked locally in a ref: read every frame without re-rendering
     const positionRef = useRef({ x: 0, y: 0 })
 
     useEffect(() => {
-        const handleMouseMove = (event) => {
+        const handleMouseMove = (event: MouseEvent) => {
             positionRef.current = { x: event.clientX, y: event.clientY }
         }
         window.addEventListener('mousemove', handleMouseMove)
@@ -29,23 +31,24 @@ export default function Creature({ ...props }) {
     const { nodes, materials } = useSpline('https://prod.spline.design/DnPjYlAzpnJ8h6Aj/scene.splinecode')
 
     useFrame(({ viewport }) => {
+        if (!ref.current) return
         const x = (positionRef.current.x * viewport.width) / 25.5
         const y = (positionRef.current.y * viewport.height) / 25.5
         ref.current.lookAt(x-1500, -(y-1500), 4000)
     })
 
     useFrame((_state, delta) => {
+        if (!body.current) return
         // After the tab is hidden, the first frame's delta spans the whole hidden time,
         // which would teleport the creature far off-screen — clamp it
         delta = Math.min(delta, 0.05);
         const speed = 5; // Movement speed
         const maxY = 20; // Maximum Y position
         const minY = -10
-        const z = { maxZ: 1.8, minZ: 1.5}
         const x= { maxX: 5, minX: -5}
         //console.log(camera.current.zoom)
         //console.log(delta)
-        
+
         // Change object on Y axis
         if ( up === true ) {
             body.current.position.y += delta * speed;
@@ -54,8 +57,8 @@ export default function Creature({ ...props }) {
                 setUp(false)
             }
 
-        } 
-        
+        }
+
         if ( up === false ) {
             body.current.position.y -= delta * speed;
             if (body.current.position.y <= minY) {
@@ -71,8 +74,8 @@ export default function Creature({ ...props }) {
                 setAxisX(false)
             }
 
-        } 
-    
+        }
+
         if ( axisX === false ) {
             body.current.position.x -= delta * speed/1.6;
             if (body.current.position.x <= x.minX) {
@@ -88,8 +91,8 @@ export default function Creature({ ...props }) {
                 setAxisZ(false)
             }
 
-        } 
-    
+        }
+
         if ( axisZ === false ) {
             camera.current.zoom -= delta * speed/1500;
             if (camera.current.zoom <= z.minZ) {
@@ -99,6 +102,7 @@ export default function Creature({ ...props }) {
     });
 
     useFrame((_state, delta) => {
+        if (!handRight.current || !handLeft.current) return
         delta = Math.min(delta, 0.05);
         const maxZ = 2.37
         const minZ = 0.37
@@ -109,7 +113,7 @@ export default function Creature({ ...props }) {
             handLeft.current.rotation.z -= delta * 5
             handLeft.current.position.y += delta * 85
         }
-        
+
         // Hands down
         if (!handUp && handRight.current.rotation.z >= minZ) {
             handRight.current.rotation.z -= delta * 5
@@ -130,9 +134,9 @@ export default function Creature({ ...props }) {
         <>
         {/* <color attach="background" args={['#aba8c7']} /> */}
         <group {...props} dispose={null}>
-            <group 
-                name="Creature" 
-                ref={body} 
+            <group
+                name="Creature"
+                ref={body}
                 onPointerEnter={() => setHandUp(true)}
                 onPointerLeave={() => setHandUp(false)}
             >

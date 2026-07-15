@@ -10,22 +10,24 @@ function Contact() {
   const [message, setMessage] = useState('');
   const [displayAlert, setDisplayAlert] = useState(false);
 
-  const form = useRef()
+  const form = useRef<HTMLFormElement>(null)
 
-  const sendEmail = (e) => {
+  const sendEmail = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    emailjs.sendForm(
-      "service_86qwvvd",
-      "template_28nzdyw",
-      form.current,
-      "aZgtnf24mJ8fSRHdo"
-    ).then(
-      result => console.log(result.text),
-      error => console.log(error.text)
-    )
+    if (form.current) {
+      emailjs.sendForm(
+        "service_86qwvvd",
+        "template_28nzdyw",
+        form.current,
+        "aZgtnf24mJ8fSRHdo"
+      ).then(
+        result => console.log(result.text),
+        error => console.log(error.text)
+      )
+    }
 
-    e.target.reset()
+    e.currentTarget.reset()
     // alert(`Thank you, ${name}! Your message has been sent.`);
     setDisplayAlert(true)
     setEmail('')
@@ -37,16 +39,16 @@ function Contact() {
 
   return (
     <div className="p-4 pt-[100px] text-center h-screen">
-      <h1 className="text-3xl 
-        font-bold 
-        mb-10 
-        bg-gradient-to-l 
-        hover:bg-gradient-to-r 
-        from-indigo-500 
-        via-purple-500 
-        to-pink-500 
+      <h1 className="text-3xl
+        font-bold
+        mb-10
+        bg-gradient-to-l
+        hover:bg-gradient-to-r
+        from-indigo-500
+        via-purple-500
+        to-pink-500
         duration-1000
-        bg-clip-text 
+        bg-clip-text
         animate-pulse
         text-fill-transparent">Contact Me</h1>
       <form ref={form} onSubmit={sendEmail} className="max-w-md mx-auto">
@@ -89,7 +91,7 @@ function Contact() {
             id="message"
             value={message}
             onChange={(event) => setMessage(event.target.value)}
-            rows="5"
+            rows={5}
             name='message'
             className="w-full border-gray-300 bg-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 cursor-none"
             required
@@ -99,7 +101,7 @@ function Contact() {
           <button
             test-id='submits-btn'
             type="submit"
-            className="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-indigo-500 hover:bg-indigo-700 border-2 border-indigo-500 
+            className="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-indigo-500 hover:bg-indigo-700 border-2 border-indigo-500
             hover:border-indigo-700 duration-500 cursor-none"
             data-mousecustom={JSON.stringify({ width: '15px', height: '15px', color: 'rgba(225, 39, 245, 1)' })}
           >
@@ -122,7 +124,7 @@ function Contact() {
 export default Contact;
 
 
-const MyAlert = ({Name}) => {
+const MyAlert = ({ Name }: { Name?: string }) => {
   return (
     <div className='relative mt-[50px] w-[500px] ml-auto mr-auto' test-id='alert'>
       <Alert severity="success">Thank you, {Name} Your message has been sent.</Alert>

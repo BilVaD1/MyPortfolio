@@ -1,7 +1,7 @@
 import React from 'react'
 import { AiOutlineGithub } from 'react-icons/ai'
 
-const Git = ({ gitLink }) => {
+const Git = ({ gitLink }: { gitLink: string }) => {
     return (
         <a href={gitLink}
             test-id='git-btn'

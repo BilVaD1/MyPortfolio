@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react'
 import { ExperienceItem } from '../components'
-import { useStateContext } from '../contexts/ContextProvider'
 
 const items = [
   {
@@ -79,9 +78,11 @@ const items = [
   },
 ];
 
+const arrowMouseStyle = JSON.stringify({ width: '20px', height: '20px', color: 'rgba(255, 140, 0, 0.7)' });
+const dotMouseStyle = JSON.stringify({ width: '10px', height: '10px', color: 'rgba(255, 140, 0, 0.7)' });
+
 const Experience = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { setMouseColor, setMouseWidth, setMouseHeight } = useStateContext();
 
   const handlePrev = () => {
     setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
@@ -93,18 +94,6 @@ const Experience = () => {
 
   const handleDotClick = (idx) => {
     setSelectedIndex(idx);
-  };
-
-  // Mouse effect handlers
-  const handleMouseOver = (size) => {
-    setMouseWidth(size);
-    setMouseHeight(size);
-    setMouseColor('rgba(255, 140, 0, 0.7)'); // orange
-  };
-  const handleMouseLeave = () => {
-    setMouseWidth('35px');
-    setMouseHeight('35px');
-    setMouseColor('rgba(0, 0, 0, 0.5)');
   };
 
   return (
@@ -124,8 +113,7 @@ const Experience = () => {
           disabled={selectedIndex === 0}
           className={`absolute cursor-none left-0 z-10 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-md hover:bg-orange-200 transition disabled:opacity-40 disabled:cursor-not-allowed`}
           aria-label="Previous Experience"
-          onMouseOver={() => handleMouseOver('20px')}
-          onMouseLeave={handleMouseLeave}
+          data-mousecustom={arrowMouseStyle}
         >
           &#8592;
         </button>
@@ -137,8 +125,7 @@ const Experience = () => {
           disabled={selectedIndex === items.length - 1}
           className={`absolute cursor-none right-0 z-10 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-md hover:bg-orange-200 transition disabled:opacity-40 disabled:cursor-not-allowed`}
           aria-label="Next Experience"
-          onMouseOver={() => handleMouseOver('20px')}
-          onMouseLeave={handleMouseLeave}
+          data-mousecustom={arrowMouseStyle}
         >
           &#8594;
         </button>
@@ -150,8 +137,7 @@ const Experience = () => {
             onClick={() => handleDotClick(idx)}
             className={`w-3 h-3 cursor-none rounded-full border-2 ${selectedIndex === idx ? 'bg-orange-400 border-orange-400' : 'bg-gray-300 dark:bg-gray-700 border-gray-400'} transition`}
             aria-label={`Go to experience ${idx + 1}`}
-            onMouseOver={() => handleMouseOver('10px')}
-            onMouseLeave={handleMouseLeave}
+            data-mousecustom={dotMouseStyle}
           />
         ))}
       </div>

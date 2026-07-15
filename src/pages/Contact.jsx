@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import emailjs from 'emailjs-com';
 import Alert from '@mui/material/Alert';
 
-import { useStateContext } from '../contexts/ContextProvider'
 import { LinkedinIcon, Insta } from '../components';
 
 function Contact() {
@@ -10,8 +9,6 @@ function Contact() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [displayAlert, setDisplayAlert] = useState(false);
-
-  const { setMouseHeight, setMouseWidth, setMouseColor, setMouseTop } = useStateContext();
 
   const form = useRef()
 
@@ -66,8 +63,6 @@ function Contact() {
             onChange={(event) => setName(event.target.value)}
             className="w-full border-gray-800 bg-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 cursor-none"
             required
-            onMouseOver={() => {setMouseHeight('30px'); setMouseWidth('2px'); setMouseColor('rgba(67, 39, 245, 1)'); setMouseTop(-10)}}
-            onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)'); setMouseTop(-5)}}  
           />
         </div>
         <div className="mb-4">
@@ -83,8 +78,6 @@ function Contact() {
             onChange={(event) => setEmail(event.target.value)}
             className="w-full border-gray-300 bg-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 cursor-none"
             required
-            onMouseOver={() => {setMouseHeight('30px'); setMouseWidth('2px'); setMouseColor('rgba(67, 39, 245, 1)'); setMouseTop(-10)}}
-            onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)'); setMouseTop(-5)}} 
           />
         </div>
         <div className="mb-4">
@@ -100,8 +93,6 @@ function Contact() {
             name='message'
             className="w-full border-gray-300 bg-slate-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 cursor-none"
             required
-            onMouseOver={() => {setMouseHeight('30px'); setMouseWidth('2px'); setMouseColor('rgba(67, 39, 245, 1)'); setMouseTop(-10)}}
-            onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)'); setMouseTop(-5)}} 
           ></textarea>
         </div>
         <div className="text-center mt-[40px]">
@@ -110,8 +101,7 @@ function Contact() {
             type="submit"
             className="py-2 px-4 font-semibold rounded-lg shadow-md text-white bg-indigo-500 hover:bg-indigo-700 border-2 border-indigo-500 
             hover:border-indigo-700 duration-500 cursor-none"
-            onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px'); setMouseColor('rgba(225, 39, 245, 1)')}}
-            onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)')}} 
+            data-mousecustom={JSON.stringify({ width: '15px', height: '15px', color: 'rgba(225, 39, 245, 1)' })}
           >
             Send Message
           </button>
@@ -122,8 +112,7 @@ function Contact() {
             <Insta />
       </div>
       <div className='dark:text-white mt-[15px]'><a href='mailto:bilvad1@gmail.com' className='cursor-none'
-      onMouseOver={() => {setMouseHeight('20px'); setMouseWidth('30px'); setMouseColor('rgba(67, 39, 245, 0.4)'); setMouseTop(-10)}}
-      onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)'); setMouseTop(-5)}}>bilvad1@gmail.com</a></div>
+      data-mousecustom={JSON.stringify({ width: '30px', height: '20px', color: 'rgba(67, 39, 245, 0.4)', top: '-10px' })}>bilvad1@gmail.com</a></div>
       {displayAlert ? <MyAlert /> : ''}
 
     </div>

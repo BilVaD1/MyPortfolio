@@ -14,42 +14,25 @@ export const ContextProvider = ({ children }) => {
     const [isClicked, setIsClicked] = useState(initialState);
     const [screenSize, setScreenSize] = useState(undefined);
     const [currentMode, setCurrentMode] = useState('Dark');
-    const [mouseWidth, setMouseWidth] = useState('35px');
-    const [mouseHeight, setMouseHeight] = useState('35px');
-    const [mouseTop, setMouseTop] = useState(-5);
-    const [mouseLeft, setMouseLeft] = useState(-10);
-    const [mouseColor, setMouseColor] = useState('rgba(0, 0, 0, 0.5)');
-    const [scrollPosition, setScrollPosition] = useState(0);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [scrollTop, setScrollTop] = useState(null);
-    const [clientHeight, setClientHeight] = useState(null);
-    const [scrollHeight, setScrollHeight] = useState(null);
+    // Live-tunable props for the SmartMouse cursor (used by the demo page)
+    const [mouseConfig, setMouseConfig] = useState({ lerp: 1, clickScale: 1, blendMode: undefined, glass: false });
 
     const handleClick = (clicked) => {
         setIsClicked({...initialState, [clicked]:true})
     }
 
     return (
-        <StateContext.Provider 
-            value={{ activeMenu, 
+        <StateContext.Provider
+            value={{ activeMenu,
                 setActiveMenu,
-                isClicked, 
+                isClicked,
                 setIsClicked,
-                handleClick, 
-                screenSize, 
+                handleClick,
+                screenSize,
                 setScreenSize,
-                currentMode, 
+                currentMode,
                 setCurrentMode,
-                mouseWidth, setMouseWidth,
-                mouseHeight, setMouseHeight,
-                mouseTop, setMouseTop,
-                mouseLeft, setMouseLeft,
-                mouseColor, setMouseColor,
-                scrollPosition, setScrollPosition,
-                position, setPosition,
-                scrollTop, setScrollTop,
-                clientHeight, setClientHeight,
-                scrollHeight, setScrollHeight
+                mouseConfig, setMouseConfig
 
             } /* Transport states in each Component */}
         >

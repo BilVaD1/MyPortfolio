@@ -5,16 +5,15 @@ import { useStateContext } from '../../contexts/ContextProvider'
 
 const Insta = () => {
 
-    const { currentMode, setMouseHeight, setMouseWidth, setMouseColor } = useStateContext();
+    const { currentMode } = useStateContext();
 
     return (
-        <a href="https://www.instagram.com/bilvad1/" 
+        <a href="https://www.instagram.com/bilvad1/"
             test-id='insta-btn'
             target="_blank"
             rel="noreferrer"
             className='cursor-none'
-            onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px'); setMouseColor('rgba(225, 39, 245, 0.7)')}}
-            onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)')}}  
+            data-mousecustom={JSON.stringify({ width: '15px', height: '15px', color: 'rgba(225, 39, 245, 0.7)' })}
         >
             {currentMode === 'Dark' ?  <AiOutlineInstagram /> : <AiFillInstagram />}
         </a>

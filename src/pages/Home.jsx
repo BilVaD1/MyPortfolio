@@ -3,18 +3,13 @@ import { DownloadButton, Git, LinkedinIcon, Insta } from '../components';
 
 import myPhoto from '../data/MyPhoto2.jpg'
 
-import { useStateContext } from '../contexts/ContextProvider'
-
 function Home() {
-  const { setMouseHeight, setMouseWidth, setMouseTop, setMouseLeft, setMouseColor } = useStateContext();
-
   return (
     <div className="dark:text-white mt-[100px] pb-[50px]">
 
       <div className='absolute md:right-16 md:top-20 top-10 right-5'
         test-id='DownloadButton'
-        onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px'); setMouseColor('rgba(191, 75, 30, 1)')}}
-        onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseTop(-5); setMouseLeft(-10); setMouseColor('rgba(0, 0, 0, 0.5)')}}
+        data-mousecustom={JSON.stringify({ width: '15px', height: '15px', color: 'rgba(191, 75, 30, 1)' })}
       >
         <DownloadButton />
       </div>
@@ -27,8 +22,7 @@ function Home() {
           </div>
           <div className="flex flex-col justify-center"
             test-id='main-text'
-            onMouseOver={() => { setMouseColor('rgba(0, 0, 0, 0.125)') }}
-            onMouseLeave={() => { setMouseColor('rgba(0, 0, 0, 0.5)') }}
+            data-mousecustom={JSON.stringify({ color: 'rgba(0, 0, 0, 0.125)' })}
           >
             <h2 className="text-2xl font-bold dark:text-white text-gray-800 mb-10">Hi, I'm Vadym <br /> Full Stack Developer</h2>
             <p className="text-gray-700 dark:text-white mb-4">

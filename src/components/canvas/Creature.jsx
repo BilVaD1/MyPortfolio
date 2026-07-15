@@ -2,13 +2,9 @@ import { useEffect, useState, useRef } from 'react'
 import useSpline from '@splinetool/r3f-spline'
 import { OrthographicCamera } from '@react-three/drei'
 
-import { useFrame, useThree } from '@react-three/fiber'
-
-import { useStateContext } from '../../contexts/ContextProvider'
+import { useFrame } from '@react-three/fiber'
 
 export default function Creature({ ...props }) {
-    const { mouseWidth, mouseHeight, mouseTop, mouseLeft, mouseColor, scrollPosition, position, setPosition } = useStateContext();
-
     const [up, setUp] = useState(true);
     const [axisZ, setAxisZ] = useState(true);
     const [axisX, setAxisX] = useState(true);
@@ -19,16 +15,29 @@ export default function Creature({ ...props }) {
     const camera = useRef()
     const handRight = useRef()
     const handLeft = useRef()
+    // Cursor position tracked locally in a ref: read every frame without re-rendering
+    const positionRef = useRef({ x: 0, y: 0 })
+
+    useEffect(() => {
+        const handleMouseMove = (event) => {
+            positionRef.current = { x: event.clientX, y: event.clientY }
+        }
+        window.addEventListener('mousemove', handleMouseMove)
+        return () => window.removeEventListener('mousemove', handleMouseMove)
+    }, [])
 
     const { nodes, materials } = useSpline('https://prod.spline.design/DnPjYlAzpnJ8h6Aj/scene.splinecode')
 
-    useFrame(({ mouse, viewport }) => {
-        const x = (position.x * viewport.width) / 25.5
-        const y = (position.y * viewport.height) / 25.5
+    useFrame(({ viewport }) => {
+        const x = (positionRef.current.x * viewport.width) / 25.5
+        const y = (positionRef.current.y * viewport.height) / 25.5
         ref.current.lookAt(x-1500, -(y-1500), 4000)
     })
 
     useFrame((_state, delta) => {
+        // After the tab is hidden, the first frame's delta spans the whole hidden time,
+        // which would teleport the creature far off-screen — clamp it
+        delta = Math.min(delta, 0.05);
         const speed = 5; // Movement speed
         const maxY = 20; // Maximum Y position
         const minY = -10
@@ -90,6 +99,7 @@ export default function Creature({ ...props }) {
     });
 
     useFrame((_state, delta) => {
+        delta = Math.min(delta, 0.05);
         const maxZ = 2.37
         const minZ = 0.37
         // Hands up
@@ -133,6 +143,8 @@ export default function Creature({ ...props }) {
                         name="Right Eye Elipse"
                         geometry={nodes['Right Eye Elipse'].geometry}
                         material={materials['Right Eye Elipse Material']}
+                        // Spline loader exports this material with depthWrite off, letting the eyeball draw over the pupil
+                        material-depthWrite={true}
                         castShadow
                         receiveShadow
                         position={[0, -1, 10.75]}
@@ -165,6 +177,7 @@ export default function Creature({ ...props }) {
                         name="LeftEye Elipse"
                         geometry={nodes['LeftEye Elipse'].geometry}
                         material={materials['LeftEye Elipse Material']}
+                        material-depthWrite={true}
                         castShadow
                         receiveShadow
                         position={[0, -1, 10.75]}
@@ -237,7 +250,9 @@ export default function Creature({ ...props }) {
             makeDefault={true}
             zoom={1.4}
             far={100000}
-            near={-100000}
+            // near must not be negative: the Stars shell (radius ~800) surrounds this camera at z=500,
+            // and a negative near renders stars behind the camera on top of the creature
+            near={0}
             position={[0, 0, 500]}
             rotation={[0, 0, 0]}
             />

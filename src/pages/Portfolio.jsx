@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { AiOutlineClose } from 'react-icons/ai'
 
 import { IconContext } from "react-icons";
 
 import { Git, External } from '../components';
-import { useStateContext } from '../contexts/ContextProvider'
 
 import employees from '../data/Employees.png'
 import fuel from '../data/Fuel2.png'
@@ -30,7 +30,8 @@ const cards = [
     link: 'Project6',
     href: 'https://www.npmjs.com/package/react-smart-mouse',
     linkOnGit: 'https://github.com/BilVaD1/SmartMouse',
-    title: 'React FollowMouse Component',
+    demoLink: '/SmartMouse',
+    title: 'SmartMouse',
     description: 'A custom mouse cursor component with flexible settings',
     additionalDescription: "The FollowMouse component is a React component that tracks the mouse cursor position and renders a customizable mouse follower element. It allows you to add interactive and visually appealing mouse effects to your web applications. Also, it understands which element it's hovering and apply the different related impacts on the component (e.g. button, a, img, span, p, etc...)",
     image: mouse,
@@ -87,10 +88,11 @@ const cards = [
   }
 ]
 
+const cardMouseStyle = JSON.stringify({ width: '15px', height: '15px' });
+const textMouseStyle = JSON.stringify({ width: '15px', height: '15px', color: 'rgba(0, 0, 0, 0.125)' });
+
 const Portfolio = () => {
   const [activeCard, setActiveCard] = useState(0);
-
-  const { setMouseHeight, setMouseWidth, setMouseColor } = useStateContext();
 
   const ref = useRef();
 
@@ -151,17 +153,14 @@ const Portfolio = () => {
               ${activeCard === card.id ? 'max-h-[750px] max-w-[800px] overflow-y-scroll relative dark:text-slate-900 bg-gray-100 grayscale-0' : 'max-w-sm hover:mt-[50px] hover:mr-20 hover:max-h-[450px] max-h-[400px]'}
             `}
             onClick={() => handleCardClick(card.id)}
-            onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px')}}
-            onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px')}}
-          > 
+            data-mousecustom={cardMouseStyle}
+          >
             {activeCard === card.id ? 
               <div className='text-3xl hover:text-4xl fixed right-0 top-0 duration-500 mt-[5px] mr-[5px]'>
                 <button onClick={handleClose}
                   test-id="close-btn"
                   className="cursor-none"
-                  onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px'); setMouseColor('rgba(49, 39, 245, 0.7)')}}
-                  onMouseDown={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)')}}  
-                  onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)')}} 
+                  data-mousecustom={JSON.stringify({ width: '15px', height: '15px', color: 'rgba(49, 39, 245, 0.7)' })}
                 >
                   <IconContext.Provider value={{ color: "orange", className: "global-class-name" }}>
                     <div>
@@ -186,23 +185,26 @@ const Portfolio = () => {
                     {card.title}
                     <External link={card.href}/>
                 </div> : ''}
-              <p className="text-base"
-                onMouseOver={() => { setMouseColor('rgba(0, 0, 0, 0.125)') }}
-                onMouseLeave={() => { setMouseColor('rgba(0, 0, 0, 0.5)') }} 
-              >
+              <p className="text-base" data-mousecustom={textMouseStyle}>
                 {card.description}
               </p>
 
               <div className={`
                 ${activeCard === card.id ? 'hover:block mt-[20px]' : 'hidden'}`}            
               >
-                <div
-                  onMouseOver={() => { setMouseColor('rgba(0, 0, 0, 0.125)') }}
-                  onMouseLeave={() => { setMouseColor('rgba(0, 0, 0, 0.5)') }}   
-                >
+                <div data-mousecustom={textMouseStyle}>
                   {card.additionalDescription}
                 </div>
-                <div className='text-4xl mt-[20px] mr-[15px] flex justify-end'>
+                <div className='text-4xl mt-[20px] mr-[15px] flex justify-end items-center gap-6'>
+                  {card.demoLink &&
+                    <Link
+                      to={card.demoLink}
+                      onClick={(e) => e.stopPropagation()}
+                      className='text-lg border-2 border-orange-500 text-orange-500 rounded-full px-4 py-1 hover:bg-orange-500 hover:text-white duration-300 cursor-none'
+                      data-mousecustom={cardMouseStyle}
+                    >
+                      Live Demo
+                    </Link>}
                   {card.linkOnGit &&  <Git gitLink={card.linkOnGit}/>}
                 </div>
               </div>

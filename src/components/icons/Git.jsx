@@ -1,20 +1,14 @@
 import React from 'react'
 import { AiOutlineGithub } from 'react-icons/ai'
 
-import { useStateContext } from '../../contexts/ContextProvider'
-
 const Git = ({ gitLink }) => {
-
-    const { setMouseHeight, setMouseWidth, setMouseColor } = useStateContext();
-
     return (
-        <a href={gitLink} 
+        <a href={gitLink}
             test-id='git-btn'
             target="_blank"
             rel="noreferrer"
             className='cursor-none'
-            onMouseOver={() => {setMouseHeight('15px'); setMouseWidth('15px'); setMouseColor('rgba(191, 75, 30, 0.7)')}}
-            onMouseLeave={() => {setMouseHeight('35px'); setMouseWidth('35px'); setMouseColor('rgba(0, 0, 0, 0.5)')}}  
+            data-mousecustom={JSON.stringify({ width: '15px', height: '15px', color: 'rgba(191, 75, 30, 0.7)' })}
         >
             <AiOutlineGithub />
         </a>

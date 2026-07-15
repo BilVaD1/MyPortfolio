@@ -1,38 +1,32 @@
 {
   "name": "portfolio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
-    "@mui/material": "^5.11.10",
-    "@react-three/drei": "^9.64.0",
-    "@react-three/fiber": "^8.12.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^5.18.0",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@splinetool/loader": "^1.12.98",
     "@splinetool/r3f-spline": "^1.0.2",
-    "@syncfusion/ej2-react-popups": "^20.4.49",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "emailjs": "^4.0.1",
     "emailjs-com": "^3.2.0",
-    "framer-motion": "^10.11.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-draggable": "^4.4.5",
-    "react-icons": "^4.3.1",
-    "react-router-dom": "^6.2.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-icons": "^4.12.0",
+    "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
-    "react-swipeable": "^7.0.0",
+    "react-smart-mouse": "^2.2.0",
     "react-transition-group": "^4.4.5",
     "tailwindcss-text-fill": "^0.2.0",
-    "three": "^0.151.3",
-    "web-vitals": "^2.1.4"
+    "three": "^0.161.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false && react-scripts build",
+    "build": "cross-env CI=false react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "patch-package"
   },
   "eslintConfig": {
     "extends": [
@@ -55,12 +49,14 @@
   "devDependencies": {
     "autoprefixer": "^10.4.2",
     "concurrently": "^7.6.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.9.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
+    "patch-package": "^8.0.1",
     "postcss": "^8.4.6",
     "tailwindcss": "^3.0.19"
   }

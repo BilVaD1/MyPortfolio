@@ -1,5 +1,6 @@
 export { default as Sidebar } from './Sidebar';
 export { default as AboutScene } from './aboutScene';
+export { default as ExperienceJourney } from './experienceScene';
 export { default as DownloadButton } from './DownloadButton';
 export { default as ExperienceItem } from './ExperienceItem';
 export type { ExperienceData } from './ExperienceItem';

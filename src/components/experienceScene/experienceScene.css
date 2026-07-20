@@ -1,0 +1,257 @@
+/* ============================================================================
+   Experience — scroll-driven cinematic journey
+   Themed full-viewport scenes, scroll reveal, shaped transitions, ambient art.
+   Pure CSS/SVG motion (no animation libs), consistent with the About scene.
+   ========================================================================== */
+
+.exp-journey {
+  position: relative;
+  width: 100%;
+}
+
+/* ---- Full-viewport scene shell -------------------------------------------- */
+.exp-scene {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  /* progress of the scene through the viewport, written by the rAF loop:
+     -1 (entering from below) → 0 (centred) → 1 (leaving upward) */
+  --p: 0;
+}
+
+/* Full-bleed themed backdrop */
+.exp-scene__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(120% 90% at 50% 0%, var(--bg-via) 0%, transparent 55%),
+    linear-gradient(160deg, var(--bg-from) 0%, var(--bg-to) 100%);
+}
+
+/* Soft vignette so text always has a footing */
+.exp-scene__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 80% at 50% 60%, transparent 40%, rgba(0, 0, 0, 0.35) 100%);
+}
+
+.exp-scene__art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.exp-scene__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    rgba(4, 6, 14, 0.74) 0%,
+    rgba(4, 6, 14, 0.4) 34%,
+    rgba(4, 6, 14, 0) 62%
+  );
+}
+@media (max-width: 768px) {
+  .exp-scene__scrim {
+    background: linear-gradient(
+      15deg,
+      rgba(4, 6, 14, 0.82) 20%,
+      rgba(4, 6, 14, 0.4) 55%,
+      rgba(4, 6, 14, 0) 85%
+    );
+  }
+}
+
+.exp-scene__content {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+}
+
+/* Shaped divider that bleeds one scene into the next */
+.exp-scene__divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  z-index: 2;
+  width: 100%;
+  height: 90px;
+  pointer-events: none;
+}
+.exp-scene__divider svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Scroll reveal -------------------------------------------------------- */
+.exp-reveal {
+  opacity: 0;
+  transform: translateY(38px);
+  transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.exp-scene.in-view .exp-reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Clip-reveal used for headings — wipes up from a mask */
+.exp-wipe {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.exp-scene.in-view .exp-wipe {
+  clip-path: inset(0 0 -20% 0);
+}
+
+/* Parallax drift for background art groups (reads scene progress) */
+.exp-par-slow  { transform: translateY(calc(var(--p) * 26px)); }
+.exp-par-mid   { transform: translateY(calc(var(--p) * 52px)); }
+.exp-par-fast  { transform: translateY(calc(var(--p) * -46px)); }
+
+/* ---- Progress rail -------------------------------------------------------- */
+.exp-rail {
+  position: fixed;
+  right: clamp(10px, 2vw, 26px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+.exp-rail__dot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: none;
+  background: none;
+  border: none;
+  padding: 0;
+}
+.exp-rail__label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.0);
+  white-space: nowrap;
+  transform: translateX(6px);
+  transition: color 0.3s ease, transform 0.3s ease;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+.exp-rail__dot:hover .exp-rail__label,
+.exp-rail__dot[data-active='true'] .exp-rail__label {
+  color: rgba(255, 255, 255, 0.9);
+  transform: translateX(0);
+}
+.exp-rail__pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.exp-rail__dot[data-active='true'] .exp-rail__pip {
+  background: var(--rail-accent, #ff8c42);
+  transform: scale(1.5);
+  box-shadow: 0 0 12px 2px var(--rail-accent, #ff8c42);
+}
+
+/* Top scroll-progress bar */
+.exp-progressbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--sp, 0));
+  background: linear-gradient(90deg, #ff8c42, #f9c74f, #a78bfa);
+  z-index: 60;
+  box-shadow: 0 0 10px rgba(255, 140, 66, 0.6);
+}
+
+/* ---- Info card (shared) --------------------------------------------------- */
+.exp-card {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(12, 16, 30, 0.42);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+}
+.exp-chip {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+/* ============================================================================
+   Ambient keyframes
+   ========================================================================== */
+@keyframes exp-spin        { to   { transform: rotate(360deg); } }
+@keyframes exp-spin-rev    { to   { transform: rotate(-360deg); } }
+@keyframes exp-float       { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+@keyframes exp-float-slow  { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes exp-bob         { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-10px) rotate(2deg); } }
+@keyframes exp-pulse       { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.82); } }
+@keyframes exp-glow        { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+@keyframes exp-ember       { 0% { transform: translateY(0) translateX(0); opacity: 0; }
+                             12% { opacity: 1; }
+                             100% { transform: translateY(-120px) translateX(var(--drift, 12px)); opacity: 0; } }
+@keyframes exp-dash        { to { stroke-dashoffset: -1000; } }
+@keyframes exp-dash-draw   { to { stroke-dashoffset: 0; } }
+@keyframes exp-scan        { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+@keyframes exp-chevron     { 0%, 100% { transform: translateY(0); opacity: 0.35; } 50% { transform: translateY(9px); opacity: 1; } }
+@keyframes exp-tick        { 0%, 60% { stroke-dashoffset: 40; } 100% { stroke-dashoffset: 0; } }
+@keyframes exp-flicker     { 0%, 100% { opacity: 0.9; } 45% { opacity: 0.5; } 70% { opacity: 1; } }
+@keyframes exp-orbit       { to { transform: rotate(360deg); } }
+@keyframes exp-swipe       { 0%, 22% { transform: translateX(0); } 33%, 55% { transform: translateX(-33.333%); } 66%, 88% { transform: translateX(-66.667%); } 100% { transform: translateX(0); } }
+@keyframes exp-marchdown   { to { transform: translateY(14px); } }
+@keyframes exp-widen       { 0%, 100% { transform: scaleX(0.6); opacity: 0.4; } 50% { transform: scaleX(1); opacity: 0.9; } }
+@keyframes exp-scurry      { 0% { transform: translateX(-30px) rotate(6deg); } 50% { transform: translateX(10px) rotate(-8deg); } 100% { transform: translateX(-30px) rotate(6deg); } }
+@keyframes exp-packet      { 0% { offset-distance: 0%; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
+@keyframes exp-fly         { 0% { transform: translateX(0); opacity: 0; } 8% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(var(--fly, 1200px)); opacity: 0; } }
+@keyframes exp-rise-y      { 0% { transform: translateY(120px); opacity: 0; } 14% { opacity: 1; } 86% { opacity: 1; } 100% { transform: translateY(-260px); opacity: 0; } }
+@keyframes exp-pop         { 0%, 55% { transform: scale(0); opacity: 0; } 70% { transform: scale(1.25); opacity: 1; } 82%, 100% { transform: scale(1); opacity: 1; } }
+@keyframes exp-slidey      { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+
+/* Utility animation hooks referenced from JSX */
+.exp-a-spin       { animation: exp-spin 18s linear infinite; transform-box: fill-box; transform-origin: center; }
+.exp-a-spin-rev   { animation: exp-spin-rev 26s linear infinite; transform-box: fill-box; transform-origin: center; }
+.exp-a-float      { animation: exp-float 6s ease-in-out infinite; }
+.exp-a-float-slow { animation: exp-float-slow 8s ease-in-out infinite; }
+.exp-a-bob        { animation: exp-bob 7s ease-in-out infinite; }
+.exp-a-glow       { animation: exp-glow 4s ease-in-out infinite; }
+.exp-a-flicker    { animation: exp-flicker 3.5s ease-in-out infinite; }
+
+/* ---- Motion sensitivity --------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .exp-journey *,
+  .exp-journey *::before,
+  .exp-journey *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .exp-reveal { opacity: 1; transform: none; }
+  .exp-wipe { clip-path: none; }
+  .exp-par-slow, .exp-par-mid, .exp-par-fast { transform: none; }
+}
+
+/* ---- Small screens -------------------------------------------------------- */
+@media (max-width: 768px) {
+  .exp-rail__label { display: none; }
+  .exp-scene { min-height: 100svh; }
+}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { SceneMode } from './types'
 
@@ -38,6 +38,18 @@ interface CityPalette {
   trunk: string
   church: string
   spire: string
+  /** Clock tower masonry + slate spire + illuminated dial. */
+  stone: string
+  stoneShade: string
+  stoneLight: string
+  towerRoof: string
+  towerRoofLight: string
+  clockFace: string
+  clockRim: string
+  clockDial: string
+  clockHands: string
+  clockSecond: string
+  clockGlows: boolean
   lhBody: string
   lhStripe: string
   lamp: string
@@ -63,6 +75,17 @@ const PALETTES: Record<SceneMode, CityPalette> = {
     trunk: '#6b4a2f',
     church: '#f3ead8',
     spire: '#a85638',
+    stone: '#dccdae',
+    stoneShade: '#ab9575',
+    stoneLight: '#efe4c8',
+    towerRoof: '#586977',
+    towerRoofLight: '#728490',
+    clockFace: '#f6efdd',
+    clockRim: '#b28a3c',
+    clockDial: '#3a3326',
+    clockHands: '#2a2318',
+    clockSecond: '#b0402a',
+    clockGlows: false,
     lhBody: '#f6f1e6',
     lhStripe: '#d9534f',
     lamp: '#fff3c4',
@@ -85,6 +108,17 @@ const PALETTES: Record<SceneMode, CityPalette> = {
     trunk: '#141c36',
     church: '#272f54',
     spire: '#151c38',
+    stone: '#2b3357',
+    stoneShade: '#1c2340',
+    stoneLight: '#3a4470',
+    towerRoof: '#161d3a',
+    towerRoofLight: '#232c52',
+    clockFace: '#ffe6a0',
+    clockRim: '#caa24e',
+    clockDial: '#5a4a20',
+    clockHands: '#3a2f12',
+    clockSecond: '#c85a3a',
+    clockGlows: true,
     lhBody: '#2e365c',
     lhStripe: '#5c2f45',
     lamp: '#ffe27a',
@@ -107,6 +141,17 @@ const PALETTES: Record<SceneMode, CityPalette> = {
     trunk: '#6b4a3f',
     church: '#f5e6e6',
     spire: '#a85a6b',
+    stone: '#e6d2ce',
+    stoneShade: '#bb9f9b',
+    stoneLight: '#f5e6e1',
+    towerRoof: '#6a5c72',
+    towerRoofLight: '#877690',
+    clockFace: '#faeede',
+    clockRim: '#c08a5a',
+    clockDial: '#5a4436',
+    clockHands: '#3a2c24',
+    clockSecond: '#c25a4a',
+    clockGlows: false,
     lhBody: '#f8eef0',
     lhStripe: '#d9536f',
     lamp: '#ffe9c4',
@@ -129,6 +174,17 @@ const PALETTES: Record<SceneMode, CityPalette> = {
     trunk: '#4f3628',
     church: '#e8d4b8',
     spire: '#7a3a2a',
+    stone: '#d9b78f',
+    stoneShade: '#a67c56',
+    stoneLight: '#eccaa2',
+    towerRoof: '#453b48',
+    towerRoofLight: '#5e5162',
+    clockFace: '#f7e4c2',
+    clockRim: '#bd7d38',
+    clockDial: '#4a3524',
+    clockHands: '#3a2718',
+    clockSecond: '#c14a20',
+    clockGlows: true,
     lhBody: '#efe0d0',
     lhStripe: '#c74634',
     lamp: '#ffe27a',
@@ -206,13 +262,213 @@ const Balloon = ({
   </div>
 )
 
-/** Cozy town on a rocky cliff over the sea: houses, church, lighthouse and hot-air balloons. */
+const TOWER_CX = 486
+const CLOCK_CY = 107
+/** Slide the whole tower right, into the open sky between the text panel and the photo. */
+const TOWER_SHIFT = 320
+
+/** The three clock hands, ticking once a second at the viewer's local time. */
+const ClockHands = ({ p }: { p: CityPalette }) => {
+  const [now, setNow] = useState(() => new Date())
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000)
+    return () => window.clearInterval(id)
+  }, [])
+
+  const s = now.getSeconds()
+  const m = now.getMinutes()
+  const h = now.getHours() % 12
+  const hourDeg = h * 30 + m * 0.5
+  const minDeg = m * 6 + s * 0.1
+  const secDeg = s * 6
+
+  return (
+    <g strokeLinecap="round">
+      {/* hour */}
+      <line
+        x1={TOWER_CX}
+        y1={CLOCK_CY}
+        x2={TOWER_CX}
+        y2={CLOCK_CY - 8.5}
+        transform={`rotate(${hourDeg} ${TOWER_CX} ${CLOCK_CY})`}
+        stroke={p.clockHands}
+        strokeWidth="2.4"
+      />
+      {/* minute */}
+      <line
+        x1={TOWER_CX}
+        y1={CLOCK_CY}
+        x2={TOWER_CX}
+        y2={CLOCK_CY - 12.6}
+        transform={`rotate(${minDeg} ${TOWER_CX} ${CLOCK_CY})`}
+        stroke={p.clockHands}
+        strokeWidth="1.6"
+      />
+      {/* second (with a short counterweight tail) */}
+      <line
+        x1={TOWER_CX}
+        y1={CLOCK_CY + 3.4}
+        x2={TOWER_CX}
+        y2={CLOCK_CY - 13.4}
+        transform={`rotate(${secDeg} ${TOWER_CX} ${CLOCK_CY})`}
+        stroke={p.clockSecond}
+        strokeWidth="0.8"
+      />
+      <circle cx={TOWER_CX} cy={CLOCK_CY} r="1.7" style={{ fill: p.clockHands }} />
+      <circle cx={TOWER_CX} cy={CLOCK_CY} r="0.8" style={{ fill: p.clockSecond }} />
+    </g>
+  )
+}
+
+/** A tall stone clock tower: masonry shaft with quoins, a belfry clock and a slate spire. */
+const ClockTower = ({ p }: { p: CityPalette }) => (
+  <g transform={`translate(${TOWER_SHIFT} 0)`}>
+    {/* Foundation & stepped plinth */}
+    <rect className={fade} x="452" y="242" width="68" height="10" style={{ fill: p.stoneShade }} />
+    <rect className={fade} x="457" y="234" width="58" height="9" style={{ fill: p.stoneLight }} />
+
+    {/* Masonry shaft */}
+    <rect x="462" y="132" width="48" height="102" fill="url(#tower-stone)" />
+    {/* Corner quoins — dressed stones catching / losing the light */}
+    {Array.from({ length: 7 }).map((_, i) => {
+      const y = 132 + i * 14.6
+      const light = i % 2 === 0
+      return (
+        <g key={i}>
+          <rect
+            className={fade}
+            x="462"
+            y={y}
+            width="9"
+            height="14.6"
+            style={{ fill: light ? p.stoneLight : p.stone, stroke: p.stoneShade }}
+            strokeWidth="0.5"
+          />
+          <rect
+            className={fade}
+            x="501"
+            y={y}
+            width="9"
+            height="14.6"
+            style={{ fill: light ? p.stone : p.stoneLight, stroke: p.stoneShade }}
+            strokeWidth="0.5"
+          />
+        </g>
+      )
+    })}
+    {/* Tall lancet window — glows at dusk / night */}
+    <path className={fade} d="M478 210 L478 172 A8 8 0 0 1 494 172 L494 210 Z" style={{ fill: p.stoneShade }} />
+    <path
+      className={fade}
+      d="M480 209 L480 173 A6 6 0 0 1 492 173 L492 209 Z"
+      style={{
+        fill: p.clockGlows ? p.windowLit : p.windowOff,
+        filter: p.clockGlows ? `drop-shadow(0 0 3px ${p.windowLit})` : undefined,
+      }}
+    />
+    {/* Volume shading over the shaft (lit left, shaded right) */}
+    <rect x="462" y="132" width="48" height="102" fill="url(#tower-shade)" />
+
+    {/* Projecting string course below the clock */}
+    <rect className={fade} x="458" y="126" width="56" height="6" style={{ fill: p.stoneLight }} />
+
+    {/* Belfry / clock stage */}
+    <rect x="461" y="88" width="50" height="38" fill="url(#tower-stone)" />
+    <rect className={fade} x="461" y="88" width="6" height="38" style={{ fill: p.stoneLight }} opacity="0.6" />
+    <rect className={fade} x="505" y="88" width="6" height="38" style={{ fill: p.stoneShade }} opacity="0.5" />
+    <rect x="461" y="88" width="50" height="38" fill="url(#tower-shade)" />
+
+    {/* Upper cornice */}
+    <rect className={fade} x="456" y="80" width="60" height="8" style={{ fill: p.stoneLight }} />
+
+    {/* Slate spire — two facets for a 3D ridge, with shingle courses */}
+    <polygon className={fade} points={`${TOWER_CX},38 456,80 ${TOWER_CX},80`} style={{ fill: p.towerRoofLight }} />
+    <polygon className={fade} points={`${TOWER_CX},38 ${TOWER_CX},80 516,80`} style={{ fill: p.towerRoof }} />
+    <path
+      className={fade}
+      d="M468.9 56 H503.1 M477.4 68 H494.6"
+      style={{ stroke: p.towerRoofLight }}
+      strokeWidth="0.7"
+      opacity="0.45"
+    />
+    {/* Finial */}
+    <line
+      className={fade}
+      x1={TOWER_CX}
+      y1="40"
+      x2={TOWER_CX}
+      y2="24"
+      style={{ stroke: p.clockRim }}
+      strokeWidth="1.4"
+      strokeLinecap="round"
+    />
+    <circle className={fade} cx={TOWER_CX} cy="40" r="3" style={{ fill: p.clockRim }} />
+    <circle className={fade} cx={TOWER_CX} cy="22.5" r="2" style={{ fill: p.clockRim }} />
+
+    {/* Clock face */}
+    <g
+      style={{
+        filter: p.clockGlows ? 'drop-shadow(0 0 5px rgba(255, 222, 140, 0.85))' : undefined,
+        transition: 'filter 1s',
+      }}
+    >
+      <circle className={fade} cx={TOWER_CX} cy={CLOCK_CY} r="17" style={{ fill: p.clockRim }} />
+      <circle className={fade} cx={TOWER_CX} cy={CLOCK_CY} r="15.3" style={{ fill: p.clockFace }} />
+      {/* Hour ticks — the four cardinals bolder */}
+      {Array.from({ length: 12 }).map((_, i) => {
+        const ang = (i * 30 * Math.PI) / 180
+        const major = i % 3 === 0
+        const outer = 14.4
+        const inner = major ? 10.8 : 12.4
+        return (
+          <line
+            key={i}
+            x1={TOWER_CX + Math.sin(ang) * inner}
+            y1={CLOCK_CY - Math.cos(ang) * inner}
+            x2={TOWER_CX + Math.sin(ang) * outer}
+            y2={CLOCK_CY - Math.cos(ang) * outer}
+            className={fade}
+            style={{ stroke: p.clockDial }}
+            strokeWidth={major ? 1.4 : 0.8}
+            strokeLinecap="round"
+          />
+        )
+      })}
+      <ClockHands p={p} />
+    </g>
+  </g>
+)
+
+/** Cozy town on a rocky cliff over the sea: houses, clock tower, lighthouse and hot-air balloons. */
 const CityLayer = ({ mode }: { mode: SceneMode }) => {
   const p = PALETTES[mode]
 
   return (
     <div className="absolute inset-x-0 bottom-0 h-full">
       <svg viewBox="0 0 1440 320" preserveAspectRatio="xMidYMax meet" className="absolute inset-0 h-full w-full">
+        <defs>
+          {/* Ashlar masonry (running bond) for the clock tower */}
+          <pattern id="tower-stone" x="0" y="0" width="26" height="14" patternUnits="userSpaceOnUse">
+            <rect className={fade} width="26" height="14" style={{ fill: p.stone }} />
+            <path
+              className={fade}
+              d="M0 7 H26 M0 14 H26 M13 0 V7 M6.5 7 V14 M19.5 7 V14"
+              style={{ stroke: p.stoneShade }}
+              strokeWidth="1"
+              opacity="0.65"
+            />
+            <rect className={fade} x="0.8" y="0.8" width="11.4" height="5.4" style={{ fill: p.stoneLight }} opacity="0.2" />
+            <rect className={fade} x="13.8" y="7.8" width="11.4" height="5.4" style={{ fill: p.stoneLight }} opacity="0.14" />
+          </pattern>
+          {/* Left-lit / right-shaded overlay to give the tower cylindrical volume */}
+          <linearGradient id="tower-shade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#ffffff" stopOpacity="0.16" />
+            <stop offset="0.42" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="0.6" stopColor="#000000" stopOpacity="0" />
+            <stop offset="1" stopColor="#000000" stopOpacity="0.22" />
+          </linearGradient>
+        </defs>
         {/* Grass plateau the town stands on */}
         <path
           className={fade}
@@ -293,18 +549,8 @@ const CityLayer = ({ mode }: { mode: SceneMode }) => {
           )
         })}
 
-        {/* Church tower */}
-        <g>
-          <rect className={fade} x="468" y="190" width="36" height="62" style={{ fill: p.church }} />
-          <polygon className={fade} points="462,190 510,190 486,148" style={{ fill: p.spire }} />
-          <circle className={fade} cx="486" cy="208" r="7" style={{ fill: mode === 'night' ? '#c8cfe8' : '#fffdf4' }} />
-          <path
-            d="M486 208 L486 203 M486 208 L490 210"
-            stroke={mode === 'night' ? '#333c60' : '#6b6250'}
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-        </g>
+        {/* Clock tower — stone masonry with a live clock */}
+        <ClockTower p={p} />
 
         {/* Lighthouse */}
         <g>

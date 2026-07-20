@@ -1,0 +1,331 @@
+/* -------------------------------------------------------------------------- */
+/*  Portfolio gallery — DOM chrome layered over the WebGL canvas + the          */
+/*  fallback grid. All motion respects prefers-reduced-motion.                  */
+/* -------------------------------------------------------------------------- */
+
+.pf-stage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #05060f;
+  color: #fff;
+}
+
+.pf-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/* ------------------------------- loader ---------------------------------- */
+
+.pf-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.pf-loader p {
+  font-size: 0.8rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.pf-loader .pf-loader__dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin: 0 4px;
+  border-radius: 50%;
+  background: #ff8c42;
+  animation: pf-bounce 1s ease-in-out infinite;
+}
+.pf-loader .pf-loader__dot:nth-child(2) {
+  animation-delay: 0.15s;
+  background: #f9c74f;
+}
+.pf-loader .pf-loader__dot:nth-child(3) {
+  animation-delay: 0.3s;
+  background: #ff5fa2;
+}
+
+@keyframes pf-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-10px); opacity: 1; }
+}
+
+/* ------------------------------- overlay --------------------------------- */
+
+.pf-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.pf-overlay.is-open {
+  opacity: 0;
+}
+.pf-overlay.is-open .pf-dots {
+  pointer-events: none;
+}
+
+.pf-head {
+  position: absolute;
+  top: clamp(24px, 6vh, 64px);
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.pf-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 10px;
+}
+
+.pf-title {
+  font-size: clamp(2.4rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 1;
+  font-style: italic;
+  background: linear-gradient(100deg, #ff8c42, #f9c74f 45%, #ff5fa2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 6px 24px rgba(255, 140, 66, 0.25));
+}
+
+.pf-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(70px, 12vh, 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+.pf-hint i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* ------------------------------- dots ------------------------------------ */
+
+.pf-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(28px, 5vh, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  pointer-events: auto;
+}
+
+.pf-dot {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
+}
+
+.pf-dot__pip {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pf-dot:hover .pf-dot__pip {
+  transform: scale(1.3);
+  background: var(--dot);
+}
+
+.pf-dot[data-active='true'] .pf-dot__pip {
+  background: var(--dot);
+  transform: scale(1.5);
+  box-shadow: 0 0 14px 2px var(--dot);
+}
+
+.pf-dot__label {
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  white-space: nowrap;
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dot);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.pf-dot:hover .pf-dot__label,
+.pf-dot[data-active='true'] .pf-dot__label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ------------------------------- back ------------------------------------ */
+
+.pf-back {
+  position: absolute;
+  top: clamp(20px, 4vh, 40px);
+  right: clamp(20px, 4vw, 48px); /* right side — clears the fixed hamburger menu */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(10, 12, 22, 0.55);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transform: translateX(8px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease, background 0.3s ease;
+  z-index: 1100;
+}
+.pf-back.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+.pf-back:hover {
+  background: rgba(255, 140, 66, 0.2);
+}
+
+/* --------------------------- screen-reader list -------------------------- */
+
+.pf-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------ fallback grid ---------------------------- */
+
+.pf-fallback {
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+.pf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+  max-width: 1100px;
+  margin: 50px auto 0;
+  padding: 0 24px;
+}
+
+.pf-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+  box-shadow: 0 18px 40px -20px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+.pf-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 50px -18px rgba(0, 0, 0, 0.7);
+}
+
+.pf-card__img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  filter: grayscale(1);
+  transition: filter 0.6s ease, transform 0.6s ease;
+}
+.pf-card:hover .pf-card__img {
+  filter: grayscale(0);
+  transform: scale(1.03);
+}
+
+.pf-card__body {
+  padding: 18px 20px 22px;
+}
+.pf-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.pf-card__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-left: 3px solid var(--dot);
+  padding-left: 10px;
+}
+.pf-card__desc {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.7);
+}
+.light .pf-card__desc {
+  color: rgba(20, 20, 30, 0.7);
+}
+.pf-card__links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 18px;
+  font-size: 1.8rem;
+}
+.pf-card__demo {
+  font-size: 0.85rem;
+  border: 2px solid;
+  border-radius: 999px;
+  padding: 4px 16px;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.pf-card__demo:hover {
+  background: var(--dot);
+  color: #0a0a12 !important;
+}
+
+/* ------------------------------ reduced motion --------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-loader__dot,
+  .pf-card,
+  .pf-card__img {
+    animation: none !important;
+    transition: none !important;
+  }
+}

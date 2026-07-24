@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FiArrowLeft } from 'react-icons/fi'
 
 import { projects, Project } from './projects'
-import { PortfolioGallery } from './gallery'
+import { PortfolioGallery, GalleryTheme } from './gallery'
+import { useStateContext } from '../../contexts/ContextProvider'
 import Git from '../icons/Git'
 import External from '../icons/External'
 import './portfolioScene.css'
@@ -65,6 +66,12 @@ const PortfolioCanvas = () => {
   const navigateRef = useRef(navigate)
   navigateRef.current = navigate
 
+  const { currentMode } = useStateContext()
+  const theme: GalleryTheme = currentMode === 'Light' ? 'light' : 'dark'
+  // Same ref idiom: the mount effect reads the theme without depending on it.
+  const themeRef = useRef(theme)
+  themeRef.current = theme
+
   const [active, setActive] = useState(0)
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -78,6 +85,7 @@ const PortfolioCanvas = () => {
       onActive: setActive,
       onOpen: (isOpen) => setOpen(isOpen),
       navigate: (path) => navigateRef.current(path),
+      theme: themeRef.current,
     })
     galleryRef.current = gallery
     let alive = true
@@ -103,6 +111,10 @@ const PortfolioCanvas = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useEffect(() => {
+    galleryRef.current?.setTheme(theme)
+  }, [theme])
 
   return (
     <div className="pf-stage">

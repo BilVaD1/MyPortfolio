@@ -36,7 +36,54 @@ const PANEL_ASPECT_MAX = 1.85
 
 const RING_CAM = new THREE.Vector3(0, 0.35, 11.8)
 const INTRO_CAM = new THREE.Vector3(0, 0.35, 18.2)
-const CLEAR = 0x05060f
+
+export type GalleryTheme = 'dark' | 'light'
+
+/* Everything mode-dependent lives here: the clear/fog colour the scene sits in,
+   the starfield tint, the canvas-drawn body copy, and how hard the additive
+   panel glows may push (additive light washes out on a bright backdrop). */
+const PALETTES = {
+  dark: {
+    clear: 0x05060f,
+    star: '#dfe9ff',
+    starOpacity: 0.9,
+    body: 'rgba(255,255,255,0.84)',
+    glowScale: 1,
+    deepenAccents: false,
+  },
+  light: {
+    clear: 0xeef2fa,
+    star: '#5b6b8f',
+    starOpacity: 0.5,
+    body: 'rgba(15,23,42,0.85)',
+    glowScale: 0.5,
+    deepenAccents: true,
+  },
+} as const
+
+/* Bright neon accents (yellows, pinks) vanish as text on a light backdrop —
+   drop their lightness while keeping the hue so each project stays itself. */
+function deepenAccent(hex: string): string {
+  const n = parseInt(hex.slice(1), 16)
+  const r = ((n >> 16) & 255) / 255
+  const g = ((n >> 8) & 255) / 255
+  const b = (n & 255) / 255
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const l = (max + min) / 2
+  let h = 0
+  let s = 0
+  if (max !== min) {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6
+    else if (max === g) h = ((b - r) / d + 2) / 6
+    else h = ((r - g) / d + 4) / 6
+  }
+  const c = new THREE.Color()
+  c.setHSL(h, Math.min(1, s * 1.05), Math.min(l, 0.36), THREE.SRGBColorSpace)
+  return `#${c.getHexString(THREE.SRGBColorSpace)}`
+}
 
 /* Detail layout: hero on the left, text column + buttons on the right.
    DETAIL_HALF_W is the frustum half-width the camera must guarantee so the
@@ -88,6 +135,7 @@ export interface GalleryOptions {
   onActive?: (index: number) => void
   onOpen?: (open: boolean, project?: Project) => void
   navigate?: (path: string) => void
+  theme?: GalleryTheme
 }
 
 interface Panel {
@@ -121,6 +169,7 @@ export class PortfolioGallery {
   private container: HTMLElement
   private projects: Project[]
   private opts: GalleryOptions
+  private palette: (typeof PALETTES)[GalleryTheme]
 
   private renderer!: THREE.WebGLRenderer
   private scene = new THREE.Scene()
@@ -186,6 +235,7 @@ export class PortfolioGallery {
     this.container = container
     this.projects = projects
     this.opts = opts
+    this.palette = PALETTES[opts.theme ?? 'dark']
 
     this.initRenderer()
     this.initScene()
@@ -203,7 +253,7 @@ export class PortfolioGallery {
   private initRenderer() {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
-    renderer.setClearColor(CLEAR, 1)
+    renderer.setClearColor(this.palette.clear, 1)
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.NoToneMapping
     const el = renderer.domElement
@@ -223,7 +273,7 @@ export class PortfolioGallery {
   }
 
   private initScene() {
-    this.scene.fog = new THREE.FogExp2(CLEAR, 0.05)
+    this.scene.fog = new THREE.FogExp2(this.palette.clear, 0.05)
     this.scene.add(this.ringGroup)
     this.scene.add(this.detailGroup)
     this.detailGroup.visible = false
@@ -251,8 +301,8 @@ export class PortfolioGallery {
     this.starMat = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: 0 },
-        uOpacity: { value: 0.9 },
-        uColor: { value: new THREE.Color('#dfe9ff') },
+        uOpacity: { value: this.palette.starOpacity },
+        uColor: { value: new THREE.Color(this.palette.star) },
         uPixelRatio: { value: this.renderer.getPixelRatio() },
       },
       vertexShader: STAR_VERT,
@@ -551,17 +601,18 @@ export class PortfolioGallery {
     heroBorder.position.set(this.heroWorld.x, this.heroWorld.y, -0.02)
     this.detailGroup.add(heroBorder, hero)
 
-    // text column on the right
+    // text column on the right — neon accents get re-pitched darker on light
+    const ink = this.palette.deepenAccents ? deepenAccent(project.accent) : project.accent
     const eyebrow = makeEyebrowTexture(
       `${String(this.projects.indexOf(project) + 1).padStart(2, '0')} · Project`,
-      project.accent,
+      ink,
     )
     addPlane(eyebrow.texture, eyebrow.aspect, 3.0, leftX + 1.5)
 
-    const title = makeTitleTexture(project.title, project.accent)
+    const title = makeTitleTexture(project.title, ink)
     addPlane(title.texture, title.aspect, textW, colCenter)
 
-    const body = makeBodyTexture(project.detail, { width: 1024, fontSize: 44 })
+    const body = makeBodyTexture(project.detail, { width: 1024, fontSize: 44, color: this.palette.body })
     addPlane(body.texture, body.aspect, textW, colCenter)
 
     // buttons row
@@ -579,8 +630,10 @@ export class PortfolioGallery {
     let bx = colCenter - total / 2 + bW / 2
     const by = cursorY - 0.1 - bH / 2
 
+    // deepened accents are dark fills, so the filled label flips to near-white
+    const filledLabel = this.palette.deepenAccents ? '#f8fafc' : '#0a0a12'
     defs.forEach((d) => {
-      const tex = makeButtonTexture(d.label, project.accent, d.filled)
+      const tex = makeButtonTexture(d.label, ink, d.filled, filledLabel)
       const mesh = new THREE.Mesh(
         new THREE.PlaneGeometry(bW, bH),
         new THREE.MeshBasicMaterial({ map: tex.texture, transparent: true, toneMapped: false, opacity: 0, depthWrite: false, fog: false }),
@@ -784,7 +837,7 @@ export class PortfolioGallery {
       p.mesh.material.opacity = fade
       p.border.material.opacity = fade * (0.5 + 0.5 * frontness + (isHover ? 0.3 : 0))
       ;(p.glow.material as THREE.SpriteMaterial).opacity =
-        ringFade * front01 * (0.12 + frontness * 0.25 + (isHover ? 0.4 : 0))
+        ringFade * front01 * (0.12 + frontness * 0.25 + (isHover ? 0.4 : 0)) * this.palette.glowScale
     })
 
     this.ringGroup.visible = ringFade > 0.02
@@ -795,7 +848,10 @@ export class PortfolioGallery {
     }
 
     // starfield dims as we dive into a project
-    if (this.starMat) this.starMat.uniforms.uOpacity.value = lerp(0.9, 0.4, camF) * introF
+    if (this.starMat) {
+      const base = this.palette.starOpacity
+      this.starMat.uniforms.uOpacity.value = lerp(base, base * 0.45, camF) * introF
+    }
   }
 
   private updateFlight(time: number) {
@@ -869,6 +925,22 @@ export class PortfolioGallery {
     if (!panel || this.phase !== 'ring') return
     this.omega = 0
     this.thetaGoal = -panel.baseAngle
+  }
+
+  /** Live Light/Dark switch: re-tints the backdrop, fog and stars in place and
+      redraws the canvas-text detail scene if a project is open. */
+  setTheme(theme: GalleryTheme) {
+    const next = PALETTES[theme]
+    if (next === this.palette) return
+    this.palette = next
+    this.renderer.setClearColor(next.clear, 1)
+    ;(this.scene.fog as THREE.FogExp2).color.set(next.clear)
+    ;(this.starMat.uniforms.uColor.value as THREE.Color).set(next.star)
+    if (this.detailGroup.visible && this.openIndex >= 0) {
+      const panel = this.panels[this.openIndex]
+      this.disposeDetail()
+      this.buildDetail(panel.project, panel.heroAspect)
+    }
   }
 
   get isOpen() {

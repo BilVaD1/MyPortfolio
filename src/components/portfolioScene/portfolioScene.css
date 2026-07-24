@@ -12,6 +12,11 @@
   background: #05060f;
   color: #fff;
 }
+/* keep in sync with the light `clear` colour in gallery.ts */
+.light .pf-stage {
+  background: #eef2fa;
+  color: #0f172a;
+}
 
 .pf-canvas {
   position: absolute;
@@ -36,6 +41,9 @@
   letter-spacing: 0.35em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.55);
+}
+.light .pf-loader p {
+  color: rgba(15, 23, 42, 0.55);
 }
 
 .pf-loader .pf-loader__dot {
@@ -91,6 +99,9 @@
   color: rgba(255, 255, 255, 0.5);
   margin-bottom: 10px;
 }
+.light .pf-eyebrow {
+  color: rgba(15, 23, 42, 0.5);
+}
 
 .pf-title {
   font-size: clamp(2.4rem, 6vw, 5rem);
@@ -102,6 +113,12 @@
   background-clip: text;
   color: transparent;
   filter: drop-shadow(0 6px 24px rgba(255, 140, 66, 0.25));
+}
+.light .pf-title {
+  background: linear-gradient(100deg, #dd5e0c, #b45309 45%, #d6336c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 6px 24px rgba(221, 94, 12, 0.18));
 }
 
 .pf-hint {
@@ -123,6 +140,12 @@
   height: 4px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.35);
+}
+.light .pf-hint {
+  color: rgba(15, 23, 42, 0.55);
+}
+.light .pf-hint i {
+  background: rgba(15, 23, 42, 0.35);
 }
 
 /* ------------------------------- dots ------------------------------------ */
@@ -156,6 +179,9 @@
   background: rgba(255, 255, 255, 0.28);
   transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
+.light .pf-dot__pip {
+  background: rgba(15, 23, 42, 0.25);
+}
 
 .pf-dot:hover .pf-dot__pip {
   transform: scale(1.3);
@@ -186,6 +212,10 @@
 .pf-dot[data-active='true'] .pf-dot__label {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+/* neon accents sink toward ink so the labels stay readable on the light stage */
+.light .pf-dot__label {
+  color: color-mix(in srgb, var(--dot) 60%, #0f172a);
 }
 
 /* ------------------------------- back ------------------------------------ */
@@ -218,6 +248,14 @@
 }
 .pf-back:hover {
   background: rgba(255, 140, 66, 0.2);
+}
+.light .pf-back {
+  border-color: rgba(15, 23, 42, 0.2);
+  background: rgba(255, 255, 255, 0.6);
+  color: #0f172a;
+}
+.light .pf-back:hover {
+  background: rgba(221, 94, 12, 0.15);
 }
 
 /* --------------------------- screen-reader list -------------------------- */
@@ -261,6 +299,14 @@
 .pf-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 26px 50px -18px rgba(0, 0, 0, 0.7);
+}
+.light .pf-card {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 0 18px 40px -24px rgba(15, 23, 42, 0.25);
+}
+.light .pf-card:hover {
+  box-shadow: 0 26px 50px -22px rgba(15, 23, 42, 0.3);
 }
 
 .pf-card__img {

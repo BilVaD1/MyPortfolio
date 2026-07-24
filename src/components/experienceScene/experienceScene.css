@@ -20,6 +20,11 @@
   /* progress of the scene through the viewport, written by the rAF loop:
      -1 (entering from below) → 0 (centred) → 1 (leaving upward) */
   --p: 0;
+  /* hardcoded whites in the art (stars, specks) read this so light mode can re-ink them */
+  --art-star: #ffffff;
+}
+.light .exp-scene {
+  --art-star: rgba(30, 41, 59, 0.45);
 }
 
 /* Full-bleed themed backdrop */
@@ -38,6 +43,10 @@
   position: absolute;
   inset: 0;
   background: radial-gradient(120% 80% at 50% 60%, transparent 40%, rgba(0, 0, 0, 0.35) 100%);
+}
+/* Light mode: an airy white vignette instead of the dark one */
+.light .exp-scene__bg::after {
+  background: radial-gradient(120% 80% at 50% 60%, transparent 40%, rgba(255, 255, 255, 0.4) 100%);
 }
 
 .exp-scene__art {
@@ -59,6 +68,14 @@
     rgba(4, 6, 14, 0) 62%
   );
 }
+.light .exp-scene__scrim {
+  background: linear-gradient(
+    100deg,
+    rgba(246, 249, 253, 0.8) 0%,
+    rgba(246, 249, 253, 0.45) 34%,
+    rgba(246, 249, 253, 0) 62%
+  );
+}
 @media (max-width: 768px) {
   .exp-scene__scrim {
     background: linear-gradient(
@@ -66,6 +83,14 @@
       rgba(4, 6, 14, 0.82) 20%,
       rgba(4, 6, 14, 0.4) 55%,
       rgba(4, 6, 14, 0) 85%
+    );
+  }
+  .light .exp-scene__scrim {
+    background: linear-gradient(
+      15deg,
+      rgba(246, 249, 253, 0.86) 20%,
+      rgba(246, 249, 253, 0.45) 55%,
+      rgba(246, 249, 253, 0) 85%
     );
   }
 }
@@ -156,6 +181,13 @@
   color: rgba(255, 255, 255, 0.9);
   transform: translateX(0);
 }
+.light .exp-rail__label {
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.7);
+}
+.light .exp-rail__dot:hover .exp-rail__label,
+.light .exp-rail__dot[data-active='true'] .exp-rail__label {
+  color: rgba(15, 23, 42, 0.85);
+}
 .exp-rail__pip {
   width: 9px;
   height: 9px;
@@ -163,6 +195,10 @@
   background: rgba(255, 255, 255, 0.28);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25);
   transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.light .exp-rail__pip {
+  background: rgba(15, 23, 42, 0.25);
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.2);
 }
 .exp-rail__dot[data-active='true'] .exp-rail__pip {
   background: var(--rail-accent, #ff8c42);
@@ -191,6 +227,11 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+}
+.light .exp-card {
+  border-color: rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 24px 60px -30px rgba(15, 23, 42, 0.35);
 }
 .exp-chip {
   border: 1px solid var(--accent);

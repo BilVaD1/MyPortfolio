@@ -17,18 +17,18 @@ const RoleInfo = ({ scene, index, total }: RoleInfoProps) => {
     <div className="max-w-xl md:ml-2 lg:ml-6">
       {/* Chapter counter */}
       <div
-        className="exp-reveal mb-4 flex items-center gap-3 font-mono text-sm tracking-widest text-white/70"
+        className="exp-reveal mb-4 flex items-center gap-3 font-mono text-sm tracking-widest text-slate-700/80 dark:text-white/70"
         style={{ ['--i' as string]: 0 }}
       >
         <span style={{ color: 'var(--accent)' }}>{num}</span>
-        <span className="h-px w-10 bg-white/30" />
+        <span className="h-px w-10 bg-slate-900/30 dark:bg-white/30" />
         <span>{totalStr}</span>
       </div>
 
       {/* Project + role heading */}
       <div className="pb-1">
         <h2
-          className="exp-wipe pb-1 text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl"
+          className="exp-wipe pb-1 text-3xl font-black leading-tight text-slate-900 dark:text-white sm:text-4xl md:text-5xl"
           style={{ ['--i' as string]: 1 }}
         >
           {scene.role}
@@ -43,7 +43,7 @@ const RoleInfo = ({ scene, index, total }: RoleInfoProps) => {
 
       {/* Framing line */}
       <p
-        className="exp-reveal mt-4 max-w-lg text-base leading-relaxed text-white/85 sm:text-lg"
+        className="exp-reveal mt-4 max-w-lg text-base leading-relaxed text-slate-800/90 dark:text-white/85 sm:text-lg"
         style={{ ['--i' as string]: 3 }}
       >
         {scene.description}
@@ -61,7 +61,7 @@ const RoleInfo = ({ scene, index, total }: RoleInfoProps) => {
       {/* Responsibilities */}
       <ul className="exp-reveal mt-6 space-y-2.5" style={{ ['--i' as string]: 5 }}>
         {scene.responsibilities.map((r) => (
-          <li key={r} className="flex gap-3 text-sm leading-snug text-white/80 sm:text-[15px]">
+          <li key={r} className="flex gap-3 text-sm leading-snug text-slate-800/90 dark:text-white/80 sm:text-[15px]">
             <span
               aria-hidden
               className="mt-1.5 h-1.5 w-1.5 flex-none rounded-full"

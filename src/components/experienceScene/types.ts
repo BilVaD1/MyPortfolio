@@ -32,6 +32,8 @@ export interface RoleScene {
   tags: string[]
   responsibilities: string[]
   theme: SceneTheme
+  /** Same hue family re-pitched for light mode: pastel gradient, deepened accents. */
+  themeLight: SceneTheme
   /** The animated backdrop for this chapter. */
   Art: React.FC<SceneArtProps>
 }

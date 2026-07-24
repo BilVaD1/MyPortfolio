@@ -35,7 +35,7 @@ const HeroArt = ({ active }: SceneArtProps) => (
             cx={cx}
             cy={cy}
             r={r}
-            fill="#ffffff"
+            fill="var(--art-star, #ffffff)"
             style={{ animation: `exp-glow 4s ease-in-out ${delay}s infinite` }}
           />
         ))}

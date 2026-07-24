@@ -118,7 +118,12 @@ export function makeEyebrowTexture(text: string, color = 'rgba(255,255,255,0.6)'
 }
 
 /** A pill button: filled with the accent, or outlined when `filled` is false. */
-export function makeButtonTexture(label: string, accent: string, filled: boolean): TexResult {
+export function makeButtonTexture(
+  label: string,
+  accent: string,
+  filled: boolean,
+  filledLabelColor = '#0a0a12',
+): TexResult {
   const W = 560
   const H = 150
   const c = newCanvas(W, H)
@@ -154,7 +159,7 @@ export function makeButtonTexture(label: string, accent: string, filled: boolean
   ctx.font = `700 52px ${FONT_STACK}`
   ctx.textBaseline = 'middle'
   ctx.textAlign = 'center'
-  ctx.fillStyle = filled ? '#0a0a12' : accent
+  ctx.fillStyle = filled ? filledLabelColor : accent
   ctx.fillText(label, W / 2, H / 2 + 2)
   return toTexture(c)
 }

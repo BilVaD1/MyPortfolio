@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 export interface ClickedState {
     chat: boolean;
@@ -39,13 +39,33 @@ const initialState: ClickedState = {
     notification: false,
 }
 
+const MODE_STORAGE_KEY = 'portfolio-mode'
+
+// localStorage can throw (privacy mode, blocked storage) — fall back to Dark.
+const readStoredMode = (): Mode => {
+    try {
+        const stored = window.localStorage.getItem(MODE_STORAGE_KEY)
+        return stored === 'Light' || stored === 'Dark' ? stored : 'Dark'
+    } catch {
+        return 'Dark'
+    }
+}
+
 export const ContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [activeMenu, setActiveMenu] = useState(true);
     const [isClicked, setIsClicked] = useState<ClickedState>(initialState);
     const [screenSize, setScreenSize] = useState<number | undefined>(undefined);
-    const [currentMode, setCurrentMode] = useState<Mode>('Dark');
+    const [currentMode, setCurrentMode] = useState<Mode>(readStoredMode);
     // Live-tunable props for the SmartMouse cursor (used by the demo page)
     const [mouseConfig, setMouseConfig] = useState<MouseConfig>({ lerp: 1, clickScale: 1, blendMode: undefined, glass: false });
+
+    useEffect(() => {
+        try {
+            window.localStorage.setItem(MODE_STORAGE_KEY, currentMode)
+        } catch {
+            // storage unavailable — the mode simply won't survive a reload
+        }
+    }, [currentMode]);
 
     const handleClick = (clicked: keyof ClickedState) => {
         setIsClicked({...initialState, [clicked]:true})

@@ -9,14 +9,15 @@
 /*  Structure:                                                                  */
 /*    · a ring of textured panels (the projects) that spins with drag / wheel   */
 /*    · a twinkling starfield backdrop                                          */
-/*    · click a panel → it dissolves into particles that fly forward and reform */
-/*      as a full 3D detail scene (hero image + 3D text + clickable buttons)    */
+/*    · click a panel → it peels off the ring and glides forward like a sheet   */
+/*      of paper, rippling mid-flight, then lands flat as the hero of a full    */
+/*      3D detail scene (hero image + 3D text + clickable buttons)              */
 /* -------------------------------------------------------------------------- */
 
 import * as THREE from 'three'
 
 import { Project } from './projects'
-import { createParticleImage, ParticleImage } from './particles'
+import { createFlightCard, FlightCard } from './flightCard'
 import { STAR_VERT, STAR_FRAG } from './shaders'
 import {
   makeTitleTexture,
@@ -29,22 +30,31 @@ import {
 /* ------------------------------- tuning ---------------------------------- */
 
 const RING_RADIUS = 6.2
-const PANEL_H = 2.0
+const PANEL_H = 1.7
 const PANEL_ASPECT_MIN = 1.2
 const PANEL_ASPECT_MAX = 1.85
 
-const RING_CAM = new THREE.Vector3(0, 0.35, 10.6)
-const INTRO_CAM = new THREE.Vector3(0, 0.35, 17)
+const RING_CAM = new THREE.Vector3(0, 0.35, 11.8)
+const INTRO_CAM = new THREE.Vector3(0, 0.35, 18.2)
 const CLEAR = 0x05060f
 
+/* Detail layout: hero on the left, text column + buttons on the right.
+   DETAIL_HALF_W is the frustum half-width the camera must guarantee so the
+   widest layout (hero left edge ↔ button-row right edge) never clips. */
+const HERO_X = -3.1
+const HERO_MAX_H = 3.0
+const HERO_MAX_W = 4.4
+const DETAIL_HALF_W = 6.1
+
 const OPEN_DUR = 1.15 // s, panel → hero fly
-const REVEAL_DUR = 0.36 // s, particles → crisp hero + UI
+const REVEAL_DUR = 0.36 // s, flight card → crisp hero + UI
 const CLOSE_DUR = 1.0 // s, hero → panel fly back
 
 /* ------------------------------- helpers --------------------------------- */
 
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v))
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
+const heroHeight = (aspect: number) => Math.min(HERO_MAX_H, HERO_MAX_W / aspect)
 const easeInOut = (x: number) => (x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2)
 
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -152,11 +162,11 @@ export class PortfolioGallery {
   // transition
   private t = 0 // 0 = ring, 1 = detail
   private detailReveal = 0
-  private particle: ParticleImage | null = null
-  private particleStartPos = new THREE.Vector3()
-  private particleStartQuat = new THREE.Quaternion()
-  private particleStartScale = 1
-  private particleEndScale = 1
+  private flight: FlightCard | null = null
+  private flightStartPos = new THREE.Vector3()
+  private flightStartQuat = new THREE.Quaternion()
+  private flightStartScale = 1
+  private flightEndScale = 1
   private heroWorld = new THREE.Vector3()
   private detailGroup = new THREE.Group()
   private buttons: Button[] = []
@@ -410,10 +420,7 @@ export class PortfolioGallery {
     this.dragVel = dx * 0.006
   }
 
-  private onPointerUp = (e: PointerEvent) => {
-    if (!this.dragging) {
-      // still allow taps that never registered a down on the canvas
-    }
+  private onPointerUp = () => {
     const wasDragging = this.dragging
     this.dragging = false
     if (!wasDragging) return
@@ -479,24 +486,23 @@ export class PortfolioGallery {
     this.detailReveal = 0
     this.thetaGoal = -panel.baseAngle // bring it home for when we return
 
-    // capture the panel's current world transform as the particle start
+    // capture the panel's current world transform as the flight start
     panel.group.updateWorldMatrix(true, false)
-    panel.group.getWorldPosition(this.particleStartPos)
-    panel.group.getWorldQuaternion(this.particleStartQuat)
-    this.particleStartScale = panel.curScale
+    panel.group.getWorldPosition(this.flightStartPos)
+    panel.group.getWorldQuaternion(this.flightStartQuat)
+    this.flightStartScale = panel.curScale
 
     // hero placement (world) + end scale
     const heroAspect = panel.heroAspect
-    const heroH = Math.min(3.2, 4.8 / heroAspect)
-    this.heroWorld.set(-3.3, 0.4, 0)
-    this.particleEndScale = heroH / PANEL_H
+    const heroH = heroHeight(heroAspect)
+    this.heroWorld.set(HERO_X, 0.4, 0)
+    this.flightEndScale = heroH / PANEL_H
 
-    // build the particle image from this panel's texture image, using the same
-    // clamped aspect as the panel so it lines up with the hero on reassembly
+    // build the flight card from this panel's texture, using the same clamped
+    // aspect as the panel so it lines up with the hero on landing
     const tex = this.textures.get(panel.project.id)!
-    const img = (tex as THREE.Texture & { _img?: HTMLImageElement })._img!
-    this.particle = createParticleImage(img, PANEL_H, heroAspect, this.renderer.getPixelRatio())
-    this.scene.add(this.particle.points)
+    this.flight = createFlightCard(tex, PANEL_H, heroAspect)
+    this.scene.add(this.flight.mesh)
 
     panel.group.visible = false
     this.opts.onOpen?.(true, panel.project)
@@ -505,7 +511,7 @@ export class PortfolioGallery {
   close() {
     if (this.phase !== 'detail' && this.phase !== 'revealing') return
     this.phase = 'closing'
-    if (this.particle) this.particle.points.visible = true
+    if (this.flight) this.flight.mesh.visible = true
   }
 
   private buildDetail(project: Project, heroAspect: number) {
@@ -529,7 +535,7 @@ export class PortfolioGallery {
 
     // hero image (crisp) on the left — clone the shared panel texture so the
     // detail teardown can dispose it without freeing the panel's GPU texture
-    const heroH = Math.min(3.2, 4.8 / heroAspect)
+    const heroH = heroHeight(heroAspect)
     const heroW = heroH * heroAspect
     const heroTex = this.textures.get(project.id)!.clone()
     heroTex.needsUpdate = true
@@ -565,9 +571,10 @@ export class PortfolioGallery {
     if (project.git) defs.push({ label: 'Source', action: 'external', url: project.git, filled: false })
     defs.push({ label: 'Close', action: 'close', filled: false })
 
-    const bW = 1.7
-    const bH = bW * (150 / 560)
+    // shrink buttons when the row is crowded so it never outgrows DETAIL_HALF_W
     const bGap = 0.18
+    const bW = Math.min(1.7, (textW + 0.9 - (defs.length - 1) * bGap) / defs.length)
+    const bH = bW * (150 / 560)
     const total = defs.length * bW + (defs.length - 1) * bGap
     let bx = colCenter - total / 2 + bW / 2
     const by = cursorY - 0.1 - bH / 2
@@ -604,9 +611,12 @@ export class PortfolioGallery {
   }
 
   private computeDetailCam() {
-    const aspect = this.camera.aspect
-    const fit = Math.max(1, 1.45 / aspect)
-    this.detailCam.set(0, 0, 9 * fit)
+    // pull back until the frustum spans ±DETAIL_HALF_W at z=0, whatever the
+    // container aspect — the layout is fixed in world units, so this is the
+    // only knob that keeps it inside the viewport
+    const halfTan = Math.tan((this.camera.fov * Math.PI) / 360)
+    const z = Math.max(9, DETAIL_HALF_W / (halfTan * this.camera.aspect))
+    this.detailCam.set(0, 0, z)
   }
 
   private resize() {
@@ -616,9 +626,7 @@ export class PortfolioGallery {
     this.camera.aspect = width / height
     this.camera.updateProjectionMatrix()
     this.computeDetailCam()
-    const pr = this.renderer.getPixelRatio()
-    this.starMat.uniforms.uPixelRatio.value = pr
-    if (this.particle) this.particle.material.uniforms.uPixelRatio.value = pr
+    this.starMat.uniforms.uPixelRatio.value = this.renderer.getPixelRatio()
   }
 
   /* ------------------------------- loop ---------------------------------- */
@@ -632,7 +640,7 @@ export class PortfolioGallery {
     this.stepPhase(dt)
     this.updateCamera()
     this.updateRing(dt, time)
-    this.updateParticle(time)
+    this.updateFlight(time)
     this.updateDetail(dt)
     if (this.starMat) this.starMat.uniforms.uTime.value = time
 
@@ -661,7 +669,7 @@ export class PortfolioGallery {
         this.detailReveal = clamp(this.detailReveal + dt / REVEAL_DUR, 0, 1)
         if (this.detailReveal >= 1) {
           this.phase = 'detail'
-          if (this.particle) this.particle.points.visible = false
+          if (this.flight) this.flight.mesh.visible = false
         }
         break
       case 'closing':
@@ -682,10 +690,10 @@ export class PortfolioGallery {
 
   private finishClose() {
     if (this.openIndex >= 0) this.panels[this.openIndex].group.visible = true
-    if (this.particle) {
-      this.scene.remove(this.particle.points)
-      this.particle.dispose()
-      this.particle = null
+    if (this.flight) {
+      this.scene.remove(this.flight.mesh)
+      this.flight.dispose()
+      this.flight = null
     }
     this.phase = 'ring'
     const closed = this.openIndex
@@ -790,23 +798,25 @@ export class PortfolioGallery {
     if (this.starMat) this.starMat.uniforms.uOpacity.value = lerp(0.9, 0.4, camF) * introF
   }
 
-  private updateParticle(time: number) {
-    if (!this.particle) return
+  private updateFlight(time: number) {
+    if (!this.flight) return
     const p = clamp(this.t, 0, 1)
     const pe = easeInOut(p)
 
-    this.tmpB.copy(this.particleStartPos).lerp(this.heroWorld, pe)
-    this.particle.points.position.copy(this.tmpB)
+    this.tmpB.copy(this.flightStartPos).lerp(this.heroWorld, pe)
+    this.flight.mesh.position.copy(this.tmpB)
 
-    this.tmpQuat.copy(this.particleStartQuat).slerp(this.idQuat, pe)
-    this.particle.points.quaternion.copy(this.tmpQuat)
+    this.tmpQuat.copy(this.flightStartQuat).slerp(this.idQuat, pe)
+    this.flight.mesh.quaternion.copy(this.tmpQuat)
 
-    const s = lerp(this.particleStartScale, this.particleEndScale, pe)
-    this.particle.points.scale.setScalar(s)
+    const s = lerp(this.flightStartScale, this.flightEndScale, pe)
+    this.flight.mesh.scale.setScalar(s)
 
-    const u = this.particle.material.uniforms
+    const u = this.flight.material.uniforms
     u.uTime.value = time
-    u.uScatter.value = Math.sin(p * Math.PI)
+    // the ripple swells mid-flight and dies at both ends, keeping the card
+    // flat when it swaps with the panel and when it becomes the hero
+    u.uBend.value = Math.sin(p * Math.PI)
     // fade out as the crisp hero fades in (and back in while closing)
     u.uOpacity.value = 1 - this.detailReveal
   }
@@ -878,10 +888,10 @@ export class PortfolioGallery {
     this.ro?.disconnect()
     this.io?.disconnect()
 
-    if (this.particle) {
-      this.scene.remove(this.particle.points)
-      this.particle.dispose()
-      this.particle = null
+    if (this.flight) {
+      this.scene.remove(this.flight.mesh)
+      this.flight.dispose()
+      this.flight = null
     }
     this.disposeDetail()
     disposeObject(this.scene)
